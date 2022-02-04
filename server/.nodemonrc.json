@@ -1,5 +1,6 @@
 {
-  "ext": "js,ts,json",
+  "exec": "node -r dotenv/config -r ts-node/register ./bin/www",
+  "ext": "js,ts",
   "env": {},
   "ignore": []
 }
