@@ -3,4 +3,5 @@ export interface Player {
     name: string;
     token?: string;
     roomId: string;
+    answerSet: string[];
 }

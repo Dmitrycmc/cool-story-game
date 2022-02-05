@@ -4,8 +4,10 @@ export interface Room {
     id?: string;
     status: Status;
     token?: string;
-    playersNumber: number;
     playerIds: string[];
+    currentPlayerNumber?: number;
     questionsNumber: number;
     questionsSetId: string;
+    currentQuestionNumber?: number;
+    turn?: number;
 }
