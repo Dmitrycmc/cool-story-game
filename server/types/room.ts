@@ -5,4 +5,6 @@ export interface Room {
     status: Status;
     token?: string;
     playersNumber: number;
+    questionsNumber: number;
+    questionsSetId: string;
 }

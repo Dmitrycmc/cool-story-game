@@ -7,14 +7,23 @@ import { generate } from "rand-token";
 import { Room } from "../types/room";
 import { Player } from "../types/player";
 import { Forbidden } from "../types/errors/forbidden";
+import { questionsSetDto } from "../dto/questions-set";
 
 export const roomService = {
     createRoom: async (): Promise<Room> => {
         const token = generate(6);
+
+        const questionsSet = await questionsSetDto.findById("61fe06825360573ef8d33a76");
+        if (questionsSet === null) {
+            throw new Error("Questions set not fount");
+        }
+
         const roomId = await roomDto.insertOne({
             status: Status.REGISTRATION,
             token,
             playersNumber: 0,
+            questionsNumber: questionsSet.questions.length,
+            questionsSetId: questionsSet.id!,
         });
 
         const createdRoom = await roomDto.findById(roomId);
