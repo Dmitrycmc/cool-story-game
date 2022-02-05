@@ -40,3 +40,14 @@ Content-Type: application/json
   "token": "43kf1T",
   "answer": "Some1"
 }
+
+### Get story
+
+POST http://localhost:3050/api/v1/room/61fe214beb438712a961f2ba/story
+Content-Type: application/json
+
+{
+  "playerId": "61fe2160eb438712a961f2bb",
+  "token": "43kf1T",
+  "answer": "Some1"
+}

@@ -199,10 +199,10 @@ export const giveAnswer = async ({
         await roomDto.updateById(roomId, {
             $set: {
                 status: Status.FINISHED,
+                currentPlayerNumber: 0,
             },
             $unset: {
                 turn: 1,
-                currentPlayerNumber: 1,
                 currentQuestionNumber: 1,
             },
         });
@@ -220,4 +220,58 @@ export const giveAnswer = async ({
 
     const { token: _roomToken, ...roomStatus } = updatedRoom;
     return roomStatus;
+};
+
+export const getStory = async ({
+    roomId,
+    playerId,
+    token,
+}: {
+    roomId: string;
+    playerId?: string;
+    token?: string;
+}): Promise<string> => {
+    const room = await roomDto.findById(roomId);
+
+    if (room === null) {
+        throw new BadRequest("Invalid room: not found");
+    }
+    if (room.status !== Status.FINISHED) {
+        throw new BadRequest("Invalid room: bad status");
+    }
+    if (!playerId || !token) {
+        throw new Forbidden("Access denied: required playerId and token");
+    }
+    if (!room.playerIds.includes(playerId)) {
+        throw new Forbidden("Access denied: invalid playerId / token");
+    }
+    const player = await playerDto.findById(playerId);
+    if (player?.token !== token) {
+        throw new Forbidden("Access denied: invalid playerId / token");
+    }
+    if (playerId !== room.playerIds[room.currentPlayerNumber!]) {
+        throw new Forbidden("Access denied: Not your turn");
+    }
+
+    const result = "res";
+
+    if (room.currentPlayerNumber === room.playerIds.length - 1) {
+        await roomDto.updateById(roomId, {
+            $set: {
+                status: Status.ARCHIVED,
+            },
+            $unset: {
+                currentPlayerNumber: 1,
+                currentQuestionNumber: 1,
+            },
+        });
+    } else {
+        await roomDto.updateById(roomId, {
+            $inc: {
+                currentPlayerNumber: 1,
+            },
+        });
+    }
+
+    return result;
 };
