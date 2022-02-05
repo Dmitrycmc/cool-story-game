@@ -1,5 +1,4 @@
 import { Provider } from "./provider";
-import { ObjectId } from "mongodb";
 import { Room } from "../types/room";
 import { Status } from "../types/status";
 
@@ -30,7 +29,7 @@ describe("Mongo provider", function () {
         });
         const data = await roomsTestDto.findById(id);
 
-        expect(data?._id).toEqual(new ObjectId(id));
+        expect(data?.id).toEqual(id);
     });
 
     it("should return null", async function () {

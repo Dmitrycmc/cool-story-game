@@ -4,7 +4,7 @@ POST http://localhost:3050/api/v1/room/new
 
 ### Register
 
-POST http://localhost:3050/api/v1/room/61fdee08918b4a099079a71e/register
+POST http://localhost:3050/api/v1/room/61fdf9dc6e9ccd41d886a1e1/register
 Content-Type: application/json
 
 {

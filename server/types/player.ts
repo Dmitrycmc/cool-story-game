@@ -1,8 +1,6 @@
-import { ObjectId } from "mongodb";
-
 export interface Player {
-    _id?: ObjectId;
+    id?: string;
     name: string;
-    password?: string;
-    roomId: ObjectId;
+    token?: string;
+    roomId: string;
 }

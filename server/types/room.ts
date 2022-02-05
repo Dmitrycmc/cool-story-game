@@ -1,7 +1,7 @@
 import { Status } from "./status";
-import { ObjectId } from "mongodb";
 
 export interface Room {
-    _id?: ObjectId;
+    id?: string;
     status: Status;
+    token?: string;
 }

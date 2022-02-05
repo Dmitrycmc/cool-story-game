@@ -9,6 +9,19 @@ const { DB_PASSWORD, NODE_ENV } = process.env;
 
 export type Action = (collection: Collection) => Promise<any>;
 
+const convertId = (_id: ObjectId): string => _id.toJSON();
+
+const convert = <T extends { _id: ObjectId }>(raw: T): Omit<T, "_id"> & { id: string } => {
+    if (raw === null) {
+        return raw;
+    }
+    const { _id, ...entity } = raw;
+    return {
+        ...entity,
+        id: convertId(_id),
+    };
+};
+
 export class Provider<T> {
     collectionName: string;
 
@@ -33,16 +46,18 @@ export class Provider<T> {
     };
 
     find = (filter: Filter<T> = {}): Promise<T[]> =>
-        this.do((collection) => collection.find(filter).toArray());
+        this.do((collection) => collection.find(filter).toArray()).then((data) =>
+            data.map(convert)
+        );
 
     findById = (id: string): Promise<T | null> =>
-        this.do((collection) => collection.findOne({ _id: new ObjectId(id) }));
+        this.do((collection) => collection.findOne({ _id: new ObjectId(id) })).then(convert);
 
     findOne = (filter: Filter<T>): Promise<T | null> =>
-        this.do((collection) => collection.findOne(filter));
+        this.do((collection) => collection.findOne(filter)).then(convert);
 
     insertOne = (room: T): Promise<string> =>
-        this.do((collection) => collection.insertOne(room).then((a) => a.insertedId.toJSON()));
+        this.do((collection) => collection.insertOne(room).then((a) => convertId(a.insertedId)));
 
     deleteAll = (): Promise<void> => this.do((collection) => collection.deleteMany({}));
 }
