@@ -20,4 +20,14 @@ router.post("/:roomId/register", async (req, res, next) => {
         .catch(next);
 });
 
+router.post("/:roomId/start", async (req, res, next) => {
+    const token = req.body.token;
+    const roomId = req.params.roomId;
+
+    roomService
+        .start({ roomId, token })
+        .then(() => res.end())
+        .catch(next);
+});
+
 export default router;

@@ -1,4 +1,4 @@
-import { Collection, Filter, MongoClient, ObjectId } from "mongodb";
+import { Collection, Filter, MongoClient, ObjectId, UpdateFilter } from "mongodb";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -56,8 +56,15 @@ export class Provider<T> {
     findOne = (filter: Filter<T>): Promise<T | null> =>
         this.do((collection) => collection.findOne(filter)).then(convert);
 
-    insertOne = (room: T): Promise<string> =>
-        this.do((collection) => collection.insertOne(room).then((a) => convertId(a.insertedId)));
+    insertOne = (entity: T): Promise<string> =>
+        this.do((collection) => collection.insertOne(entity).then((a) => convertId(a.insertedId)));
+
+    updateById = (id: string, filter: UpdateFilter<T>): Promise<void> =>
+        this.do((collection) =>
+            collection.updateOne({ _id: new ObjectId(id) }, filter).then((a) => {
+                console.log(a);
+            })
+        );
 
     deleteAll = (): Promise<void> => this.do((collection) => collection.deleteMany({}));
 }

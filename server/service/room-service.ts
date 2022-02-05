@@ -6,6 +6,7 @@ import { IllegalArgument } from "../types/errors/Illegal-argument";
 import { generate } from "rand-token";
 import { Room } from "../types/room";
 import { Player } from "../types/player";
+import { Forbidden } from "../types/errors/forbidden";
 
 export const roomService = {
     createRoom: async (): Promise<Room> => {
@@ -28,7 +29,7 @@ export const roomService = {
             roomId: roomId,
         });
 
-        if (room === null) {
+        if (room === null || room.status !== Status.REGISTRATION) {
             throw new IllegalArgument("Invalid room");
         }
         if (player) {
@@ -48,5 +49,20 @@ export const roomService = {
         }
 
         return createdPlayer;
+    },
+
+    start: async ({ roomId, token }: { roomId: string; token: string }): Promise<void> => {
+        const room = await roomDto.findById(roomId);
+
+        if (room === null || room.status !== Status.REGISTRATION) {
+            throw new IllegalArgument("Invalid room");
+        }
+        if (room.token !== token) {
+            throw new Forbidden("Invalid token");
+        }
+
+        await roomDto.updateById(roomId, { $set: { status: Status.GAME } });
+
+        return;
     },
 };
