@@ -15,10 +15,16 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.coolstorygame.R;
 import com.example.coolstorygame.databinding.FragmentHomeBinding;
 
+import java.io.IOException;
+
+import okhttp3.*;
+
 public class HomeFragment extends Fragment {
 
     private HomeViewModel homeViewModel;
     private FragmentHomeBinding binding;
+
+    OkHttpClient client = new OkHttpClient();
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -36,6 +42,33 @@ public class HomeFragment extends Fragment {
             }
         });
         return root;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        binding.button.setOnClickListener(v -> client.newCall(new Request.Builder()
+                .url("https://cool-story-game.herokuapp.com/api/v1/room/61fe5794541daed60498478b/register")
+                .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"), "{\"name\": \"Player\"}"))
+                .build()
+        ).enqueue(new Callback() {
+            @Override
+            public void onFailure(final Call call, IOException e) {
+                getActivity().runOnUiThread(() -> {
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, final Response response) throws IOException {
+                String res = response.body().string();
+
+                System.out.println(res);
+
+                getActivity().runOnUiThread(() -> ((TextView)getActivity().findViewById(R.id.text_home)).setText(res));
+            }
+        }));
+
     }
 
     @Override
