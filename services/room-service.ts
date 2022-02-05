@@ -256,8 +256,7 @@ export const getStory = async ({
     const players = await playerDto.findById(room.playerIds);
 
     const result = [...new Array(room.questionsNumber)].map((_, idx) => {
-        const i = room.currentPlayerNumber! + 2 + idx;
-        console.log({ i });
+        const i = room.currentPlayerNumber! + 1 + idx;
         return players[i % room.playerIds.length]?.answerSet[idx];
     });
 

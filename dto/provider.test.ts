@@ -2,7 +2,7 @@ import { Provider } from "./provider";
 import { Room } from "../types/room";
 import { Status } from "../types/status";
 
-export const roomsTestDto = new Provider<Partial<Room>>("rooms");
+export const roomsTestDto = new Provider<Partial<Room>>("test-rooms");
 
 describe("Mongo provider", function () {
     it("should delete all", async function () {

@@ -65,11 +65,7 @@ export class Provider<T> {
         this.do((collection) => collection.insertOne(entity).then((a) => convertId(a.insertedId)));
 
     updateById = (id: string, filter: UpdateFilter<T>): Promise<void> =>
-        this.do((collection) =>
-            collection.updateOne({ _id: new ObjectId(id) }, filter).then((a) => {
-                console.log(a);
-            })
-        );
+        this.do((collection) => collection.updateOne({ _id: new ObjectId(id) }, filter));
 
     deleteAll = (): Promise<void> => this.do((collection) => collection.deleteMany({}));
 }
