@@ -12,7 +12,7 @@ class RoomsTestDto extends Provider<Room> {
 export const roomsTestDto = new RoomsTestDto();
 
 describe("Mongo provider", function () {
-    it("should return empty list", async function () {
+    it("should delete all", async function () {
         await roomsTestDto.deleteAll();
         expect(await roomsTestDto.find()).toEqual([]);
     });
@@ -26,10 +26,16 @@ describe("Mongo provider", function () {
 
     it("should return by id", async function () {
         const id = await roomsTestDto.insertOne({
-            status: Status.REGISTRATION,
+            status: Status.GAME,
         });
         const data = await roomsTestDto.findById(id);
 
-        expect(data._id).toEqual(new ObjectId(id));
+        expect(data?._id).toEqual(new ObjectId(id));
+    });
+
+    it("should return null", async function () {
+        const data = await roomsTestDto.findById("61fdd6db868546f655783a21");
+
+        expect(data).toEqual(null);
     });
 });

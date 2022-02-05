@@ -1,10 +1,10 @@
 ### Create room
 
-POST http://localhost:3000/api/v1/room/new
+POST http://localhost:3050/api/v1/room/new
 
 ### Register
 
-POST http://localhost:3000/api/v1/room/61fdcbc7c650e2089addb07f/register
+POST http://localhost:3050/api/v1/room/61fdee08918b4a099079a71e/register
 Content-Type: application/json
 
 {

@@ -35,8 +35,11 @@ export class Provider<T> {
     find = (filter: Filter<T> = {}): Promise<T[]> =>
         this.do((collection) => collection.find(filter).toArray());
 
-    findById = (id: string): Promise<T> =>
+    findById = (id: string): Promise<T | null> =>
         this.do((collection) => collection.findOne({ _id: new ObjectId(id) }));
+
+    findOne = (filter: Filter<T>): Promise<T | null> =>
+        this.do((collection) => collection.findOne(filter));
 
     insertOne = (room: T): Promise<string> =>
         this.do((collection) =>
