@@ -42,10 +42,7 @@ export class Provider<T> {
         this.do((collection) => collection.findOne(filter));
 
     insertOne = (room: T): Promise<string> =>
-        this.do((collection) =>
-            collection.insertOne(room).then((a) => a.insertedId.toJSON())
-        );
+        this.do((collection) => collection.insertOne(room).then((a) => a.insertedId.toJSON()));
 
-    deleteAll = (): Promise<void> =>
-        this.do((collection) => collection.deleteMany({}));
+    deleteAll = (): Promise<void> => this.do((collection) => collection.deleteMany({}));
 }

@@ -3,20 +3,13 @@ import { Status } from "../types/status";
 import { playerDto } from "../dto/player";
 import { ObjectId } from "mongodb";
 import { IllegalArgument } from "../types/errors/Illegal-argument";
-import { CustomError } from "../types/errors/custom-error";
 
 export const roomService = {
     createRoom: (): Promise<string> => {
         return roomDto.insertOne({ status: Status.REGISTRATION });
     },
 
-    register: async ({
-        roomId,
-        name,
-    }: {
-        roomId: string;
-        name: string;
-    }): Promise<string> => {
+    register: async ({ roomId, name }: { roomId: string; name: string }): Promise<string> => {
         const room = await roomDto.findById(roomId);
         const player = await playerDto.findOne({
             name,
