@@ -4,7 +4,7 @@ POST http://localhost:3050/api/v1/room/new
 
 ### Register
 
-POST http://localhost:3050/api/v1/room/61fe1cc9795ec811c659c74e/register
+POST http://localhost:3050/api/v1/room/61fe214beb438712a961f2ba/register
 Content-Type: application/json
 
 {
@@ -13,30 +13,30 @@ Content-Type: application/json
 
 ### Start game
 
-POST http://localhost:3050/api/v1/room/61fe1cc9795ec811c659c74e/start
+POST http://localhost:3050/api/v1/room/61fe214beb438712a961f2ba/start
 Content-Type: application/json
 
 {
-  "token": "o4rh1y"
+  "token": "feOIXc"
 }
 
 ### Room status
 
-POST http://localhost:3050/api/v1/room/61fe1cc9795ec811c659c74e/status
+POST http://localhost:3050/api/v1/room/61fe214beb438712a961f2ba/status
 Content-Type: application/json
 
 {
-  "playerId": "61fe1cdd795ec811c659c74f",
-  "token": "iDw9E1"
+  "playerId": "61fe2160eb438712a961f2bb",
+  "token": "43kf1T"
 }
 
 ### Answer
 
-POST http://localhost:3050/api/v1/room/61fe1cc9795ec811c659c74e/answer
+POST http://localhost:3050/api/v1/room/61fe214beb438712a961f2ba/answer
 Content-Type: application/json
 
 {
-  "playerId": "61fe1cdd795ec811c659c74f",
-  "token": "iDw9E1",
-  "answer": "Some"
+  "playerId": "61fe2160eb438712a961f2bb",
+  "token": "43kf1T",
+  "answer": "Some1"
 }

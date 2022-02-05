@@ -195,13 +195,26 @@ export const giveAnswer = async ({
 
     const nextTurn = room.turn! + 1;
 
-    await roomDto.updateById(roomId, {
-        $set: {
-            turn: nextTurn,
-            currentPlayerNumber: nextTurn % room.playerIds.length,
-            currentQuestionNumber: Math.floor(nextTurn / room.playerIds.length),
-        },
-    });
+    if (nextTurn === room.questionsNumber * room.playerIds.length) {
+        await roomDto.updateById(roomId, {
+            $set: {
+                status: Status.FINISHED,
+            },
+            $unset: {
+                turn: 1,
+                currentPlayerNumber: 1,
+                currentQuestionNumber: 1,
+            },
+        });
+    } else {
+        await roomDto.updateById(roomId, {
+            $set: {
+                turn: nextTurn,
+                currentPlayerNumber: nextTurn % room.playerIds.length,
+                currentQuestionNumber: Math.floor(nextTurn / room.playerIds.length),
+            },
+        });
+    }
 
     const updatedRoom = (await roomDto.findById(roomId)) as Room;
 
