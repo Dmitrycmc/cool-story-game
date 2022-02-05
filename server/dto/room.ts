@@ -4,15 +4,14 @@ import { Room } from "../types/room";
 
 export class RoomDto extends Provider {
     constructor() {
-        super("room");
+        super("rooms");
     }
 
-    find = (filter: Filter<Room> = {}) =>
+    find = (filter: Filter<Room> = {}): Promise<Room[]> =>
         this.do((collection) => collection.find(filter).toArray());
 
-    insertOne = (room: Room) => {
-        this.do((collection) => collection.insertOne(room));
-    };
+    insertOne = (room: Room): Promise<string> =>
+        this.do((collection) => collection.insertOne(room).then(a => a.insertedId.toJSON()));
 }
 
 export const roomDto = new RoomDto();
