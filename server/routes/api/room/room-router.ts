@@ -30,4 +30,15 @@ router.post("/:roomId/start", async (req, res, next) => {
         .catch(next);
 });
 
+router.post("/:roomId/status", async (req, res, next) => {
+    const playerId = req.body.playerId;
+    const token = req.body.token;
+    const roomId = req.params.roomId;
+
+    roomService
+        .getStatus({ roomId, playerId, token })
+        .then((data) => res.json(data))
+        .catch(next);
+});
+
 export default router;

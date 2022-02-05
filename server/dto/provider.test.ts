@@ -2,13 +2,7 @@ import { Provider } from "./provider";
 import { Room } from "../types/room";
 import { Status } from "../types/status";
 
-class RoomsTestDto extends Provider<Room> {
-    constructor() {
-        super("rooms");
-    }
-}
-
-export const roomsTestDto = new RoomsTestDto();
+export const roomsTestDto = new Provider<Partial<Room>>("rooms");
 
 describe("Mongo provider", function () {
     it("should delete all", async function () {

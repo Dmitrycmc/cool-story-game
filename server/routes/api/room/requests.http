@@ -4,18 +4,28 @@ POST http://localhost:3050/api/v1/room/new
 
 ### Register
 
-POST http://localhost:3050/api/v1/room/61fe034f20fbb071e37289b7/register
+POST http://localhost:3050/api/v1/room/61fe0a2dbb7c87c4bb4e11ed/register
 Content-Type: application/json
 
 {
-  "name": "Dima2"
+  "name": "Dima21123"
 }
 
 ### Start game
 
-POST http://localhost:3050/api/v1/room/61fe034f20fbb071e37289b7/start
+POST http://localhost:3050/api/v1/room/61fe0a2dbb7c87c4bb4e11ed/start
 Content-Type: application/json
 
 {
-  "token": "6UnhRI"
+  "token": "yG9yq1"
+}
+
+### Room status
+
+POST http://localhost:3050/api/v1/room/61fe0a2dbb7c87c4bb4e11ed/status
+Content-Type: application/json
+
+{
+  "playerId": "61fe0c011f41346fd807ba9e",
+  "token": "jza4wi"
 }
