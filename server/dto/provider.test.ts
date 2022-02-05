@@ -1,23 +1,12 @@
 import { Provider } from "./provider";
-import { Filter } from "mongodb";
+import { ObjectId } from "mongodb";
 import { Room } from "../types/room";
 import { Status } from "../types/status";
 
-export class RoomsTestDto extends Provider {
+class RoomsTestDto extends Provider<Room> {
     constructor() {
         super("rooms");
     }
-
-    find = (filter: Filter<Room> = {}): Promise<Room[]> =>
-        this.do((collection) => collection.find(filter).toArray());
-
-    insertOne = (room: Room): Promise<string> =>
-        this.do((collection) =>
-            collection.insertOne(room).then((a) => a.insertedId.toJSON())
-        );
-
-    deleteAll = (): Promise<void> =>
-        this.do((collection) => collection.deleteMany({}));
 }
 
 export const roomsTestDto = new RoomsTestDto();
@@ -33,5 +22,14 @@ describe("Mongo provider", function () {
         const data = await roomsTestDto.find();
         expect(data.length).toEqual(1);
         expect(data[0].status).toEqual(Status.REGISTRATION);
+    });
+
+    it("should return by id", async function () {
+        const id = await roomsTestDto.insertOne({
+            status: Status.REGISTRATION,
+        });
+        const data = await roomsTestDto.findById(id);
+
+        expect(data._id).toEqual(new ObjectId(id));
     });
 });

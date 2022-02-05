@@ -1,10 +1,17 @@
 import express from "express";
-import { roomDto } from "../../../dto/room";
+import { roomService } from "../../../service/room-service";
 
 const router = express.Router();
 
-router.get("/new", async (req, res) => {
-    res.json(await roomDto.create());
+router.post("/new", async (req, res) => {
+    res.json(await roomService.createRoom());
+});
+
+router.post("/:roomId/register", async (req, res) => {
+    const name = req.body.name;
+    const roomId = req.params.roomId;
+
+    res.json(await roomService.register({ roomId, name }));
 });
 
 export default router;

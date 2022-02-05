@@ -1,4 +1,4 @@
-import { Collection, MongoClient } from "mongodb";
+import { Collection, Filter, MongoClient, ObjectId } from "mongodb";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -9,7 +9,7 @@ const { DB_PASSWORD, NODE_ENV } = process.env;
 
 export type Action = (collection: Collection) => Promise<any>;
 
-export class Provider {
+export class Provider<T> {
     collectionName: string;
 
     constructor(collectionName: string) {
@@ -31,4 +31,18 @@ export class Provider {
 
         return result;
     };
+
+    find = (filter: Filter<T> = {}): Promise<T[]> =>
+        this.do((collection) => collection.find(filter).toArray());
+
+    findById = (id: string): Promise<T> =>
+        this.do((collection) => collection.findOne({ _id: new ObjectId(id) }));
+
+    insertOne = (room: T): Promise<string> =>
+        this.do((collection) =>
+            collection.insertOne(room).then((a) => a.insertedId.toJSON())
+        );
+
+    deleteAll = (): Promise<void> =>
+        this.do((collection) => collection.deleteMany({}));
 }

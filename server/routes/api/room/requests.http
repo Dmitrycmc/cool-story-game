@@ -1,0 +1,12 @@
+### Create room
+
+POST http://localhost:3000/api/v1/room/new
+
+### Register
+
+POST http://localhost:3000/api/v1/room/61fdcbc7c650e2089addb07f/register
+Content-Type: application/json
+
+{
+  "name": "Dima"
+}
