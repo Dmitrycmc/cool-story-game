@@ -14,6 +14,8 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.coolstorygame.R;
 import com.example.coolstorygame.databinding.FragmentHomeBinding;
+import com.example.coolstorygame.schema.request.RegisterRequest;
+import com.example.coolstorygame.schema.response.Player;
 
 import java.io.IOException;
 
@@ -48,27 +50,39 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        binding.button.setOnClickListener(v -> client.newCall(new Request.Builder()
-                .url("https://cool-story-game.herokuapp.com/api/v1/room/61fe5794541daed60498478b/register")
-                .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"), "{\"name\": \"Player\"}"))
-                .build()
-        ).enqueue(new Callback() {
-            @Override
-            public void onFailure(final Call call, IOException e) {
-                getActivity().runOnUiThread(() -> {
-                });
-            }
+        binding.button.setOnClickListener(v -> {
 
-            @Override
-            public void onResponse(Call call, final Response response) throws IOException {
-                String res = response.body().string();
+            String roomId = binding.editTextTextRoom.getText().toString();
+            String body = new RegisterRequest(binding.editTextTextPersonName.getText().toString()).toJson();
 
-                System.out.println(res);
+            client.newCall(new Request.Builder()
+                    .url("https://cool-story-game.herokuapp.com/api/v1/room/" + roomId + "/register")
+                    .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"), body))
+                    .build()
+            ).enqueue(new Callback() {
+                @Override
+                public void onFailure(final Call call, IOException e) {
+                    getActivity().runOnUiThread(() -> {});
+                }
 
-                getActivity().runOnUiThread(() -> ((TextView)getActivity().findViewById(R.id.text_home)).setText(res));
-            }
-        }));
+                @Override
+                public void onResponse(Call call, final Response response) throws IOException {
+                    String body = response.body().string();
 
+                    if (response.code() == 200) {
+
+                        Player person = Player.fromJson(body);
+
+                        getActivity().runOnUiThread(() -> ((TextView)getActivity().findViewById(R.id.text_home)).setText(person.toString()));
+                    } else {
+                        StringBuilder sb = new StringBuilder();
+                        sb.append(response.code()).append(": ").append(body);
+
+                        getActivity().runOnUiThread(() -> ((TextView)getActivity().findViewById(R.id.text_home)).setText(sb));
+                    }
+                }
+            });
+        });
     }
 
     @Override
