@@ -12,7 +12,7 @@ import { questionsSetDto } from "../dto/questions-set";
 export const createRoom = async (): Promise<Room> => {
     const token = generate(6);
 
-    const questionsSet = await questionsSetDto.findById("61fe06825360573ef8d33a76");
+    const questionsSet = await questionsSetDto.findOneById("61fe06825360573ef8d33a76");
     if (questionsSet === null) {
         throw new Error("Server error: questions set not fount");
     }
@@ -25,7 +25,7 @@ export const createRoom = async (): Promise<Room> => {
         questionsSetId: questionsSet.id!,
     });
 
-    const createdRoom = await roomDto.findById(roomId);
+    const createdRoom = await roomDto.findOneById(roomId);
 
     if (createdRoom === null) {
         throw new Error("Server error: room was not created");
@@ -41,7 +41,7 @@ export const register = async ({
     roomId: string;
     name?: string;
 }): Promise<Player> => {
-    const room = await roomDto.findById(roomId);
+    const room = await roomDto.findOneById(roomId);
     const player = await playerDto.findOne({
         name,
         roomId: roomId,
@@ -69,7 +69,7 @@ export const register = async ({
 
     await roomDto.updateById(roomId, { $push: { playerIds: createdPlayerId } });
 
-    const createdPlayer = await playerDto.findById(createdPlayerId);
+    const createdPlayer = await playerDto.findOneById(createdPlayerId);
 
     if (createdPlayer === null) {
         throw new Error("Server error: player was not created");
@@ -89,7 +89,7 @@ export const getStatus = async ({
     token?: string;
     roomToken?: string;
 }): Promise<Partial<Room>> => {
-    const room = await roomDto.findById(roomId);
+    const room = await roomDto.findOneById(roomId);
 
     if (room === null) {
         throw new BadRequest("Invalid room: not found");
@@ -109,7 +109,7 @@ export const getStatus = async ({
         if (!room.playerIds.includes(playerId)) {
             throw new Forbidden("Access denied: invalid playerId / token");
         }
-        const player = await playerDto.findById(playerId);
+        const player = await playerDto.findOneById(playerId);
         if (player?.token !== token) {
             throw new Forbidden("Access denied: invalid playerId / token");
         }
@@ -126,7 +126,7 @@ export const start = async ({
     roomId: string;
     token?: string;
 }): Promise<Partial<Room>> => {
-    const room = await roomDto.findById(roomId);
+    const room = await roomDto.findOneById(roomId);
 
     if (room === null) {
         throw new BadRequest("Invalid room: not found");
@@ -166,7 +166,7 @@ export const giveAnswer = async ({
     token?: string;
     answer?: string;
 }): Promise<Partial<Room>> => {
-    const room = await roomDto.findById(roomId);
+    const room = await roomDto.findOneById(roomId);
 
     if (room === null) {
         throw new BadRequest("Invalid room: not found");
@@ -180,7 +180,7 @@ export const giveAnswer = async ({
     if (!room.playerIds.includes(playerId)) {
         throw new Forbidden("Access denied: invalid playerId / token");
     }
-    const player = await playerDto.findById(playerId);
+    const player = await playerDto.findOneById(playerId);
     if (player?.token !== token) {
         throw new Forbidden("Access denied: invalid playerId / token");
     }
@@ -216,7 +216,7 @@ export const giveAnswer = async ({
         });
     }
 
-    const updatedRoom = (await roomDto.findById(roomId)) as Room;
+    const updatedRoom = (await roomDto.findOneById(roomId)) as Room;
 
     const { token: _roomToken, ...roomStatus } = updatedRoom;
     return roomStatus;
@@ -230,8 +230,8 @@ export const getStory = async ({
     roomId: string;
     playerId?: string;
     token?: string;
-}): Promise<string> => {
-    const room = await roomDto.findById(roomId);
+}): Promise<string[]> => {
+    const room = await roomDto.findOneById(roomId);
 
     if (room === null) {
         throw new BadRequest("Invalid room: not found");
@@ -245,7 +245,7 @@ export const getStory = async ({
     if (!room.playerIds.includes(playerId)) {
         throw new Forbidden("Access denied: invalid playerId / token");
     }
-    const player = await playerDto.findById(playerId);
+    const player = await playerDto.findOneById(playerId);
     if (player?.token !== token) {
         throw new Forbidden("Access denied: invalid playerId / token");
     }
@@ -253,7 +253,13 @@ export const getStory = async ({
         throw new Forbidden("Access denied: Not your turn");
     }
 
-    const result = "res";
+    const players = await playerDto.findById(room.playerIds);
+
+    const result = [...new Array(room.questionsNumber)].map((_, idx) => {
+        const i = room.currentPlayerNumber! + 2 + idx;
+        console.log({ i });
+        return players[i % room.playerIds.length]?.answerSet[idx];
+    });
 
     if (room.currentPlayerNumber === room.playerIds.length - 1) {
         await roomDto.updateById(roomId, {

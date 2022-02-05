@@ -50,7 +50,12 @@ export class Provider<T> {
             data.map(convert)
         );
 
-    findById = (id: string): Promise<T | null> =>
+    findById = (ids: string[]): Promise<T[]> =>
+        this.do((collection) =>
+            collection.find({ _id: { $in: ids.map((id) => new ObjectId(id)) } }).toArray()
+        ).then((data) => data.map(convert));
+
+    findOneById = (id: string): Promise<T | null> =>
         this.do((collection) => collection.findOne({ _id: new ObjectId(id) })).then(convert);
 
     findOne = (filter: Filter<T>): Promise<T | null> =>

@@ -21,13 +21,13 @@ describe("Mongo provider", function () {
         const id = await roomsTestDto.insertOne({
             status: Status.GAME,
         });
-        const data = await roomsTestDto.findById(id);
+        const data = await roomsTestDto.findOneById(id);
 
         expect(data?.id).toEqual(id);
     });
 
     it("should return null", async function () {
-        const data = await roomsTestDto.findById("61fdd6db868546f655783a21");
+        const data = await roomsTestDto.findOneById("61fdd6db868546f655783a21");
 
         expect(data).toEqual(null);
     });
