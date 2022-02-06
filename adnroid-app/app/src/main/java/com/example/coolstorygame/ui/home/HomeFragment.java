@@ -15,8 +15,11 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.coolstorygame.R;
 import com.example.coolstorygame.api.RoomProvider;
 import com.example.coolstorygame.databinding.FragmentHomeBinding;
-import com.example.coolstorygame.schema.request.RegisterRequest;
+import com.example.coolstorygame.schema.request.RequestCreate;
+import com.example.coolstorygame.schema.request.RequestRegister;
 import com.example.coolstorygame.schema.response.Player;
+import com.example.coolstorygame.schema.response.Room;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.IOException;
 
@@ -51,6 +54,7 @@ public class HomeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         binding.button.setOnClickListener(this::onClick);
+        binding.floatingActionButton4.setOnClickListener(this::createRoom);
     }
 
     @Override
@@ -63,9 +67,15 @@ public class HomeFragment extends Fragment {
     private void onClick(View v) {
         String roomId = binding.editTextTextRoom.getText().toString();
         String name = binding.editTextTextPersonName.getText().toString();
-        String body = new RegisterRequest(name).toJson();
+        String body = new RequestRegister(name).toJson();
 
         RoomProvider.post(roomId + "/register", body, this::onResponse);
+    }
+
+    private void createRoom(View v) {
+        String body = new RequestCreate().toJson();
+
+        RoomProvider.post(  "new", body, this::onRoomCreated);
     }
 
     public void onResponse(Call call, final Response response) throws IOException {
@@ -76,6 +86,26 @@ public class HomeFragment extends Fragment {
 
             getActivity().runOnUiThread(() -> {
                 ((TextView) getActivity().findViewById(R.id.text_home)).setText(person.toString());
+            });
+        } else {
+            StringBuilder sb = new StringBuilder();
+            sb.append(response.code()).append(": ").append(body);
+
+            getActivity().runOnUiThread(() -> {
+                ((TextView) getActivity().findViewById(R.id.text_home)).setText(sb);
+            });
+        }
+    }
+
+    public void onRoomCreated(Call call, final Response response) throws IOException {
+        String body = response.body().string();
+
+        if (response.code() == 200) {
+            Room room = Room.fromJson(body);
+
+            getActivity().runOnUiThread(() -> {
+                ((FloatingActionButton) getActivity().findViewById(R.id.floatingActionButton4)).setVisibility(View.INVISIBLE);
+                ((TextView) getActivity().findViewById(R.id.editTextTextRoom)).setText(room.id);
             });
         } else {
             StringBuilder sb = new StringBuilder();

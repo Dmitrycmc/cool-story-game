@@ -20,8 +20,8 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:ems="10"
-            android:inputType="textPersonName"
             android:hint="Код комнаты"
+            android:inputType="textPersonName"
             android:textAlignment="center" />
         <EditText
 
@@ -32,8 +32,8 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:ems="10"
-            android:inputType="textPersonName"
             android:hint="Имя"
+            android:inputType="textPersonName"
             android:textAlignment="center" />
 
         <Button
@@ -57,5 +57,18 @@
             android:textSize="20sp" />
 
     </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionButton4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:src="@android:drawable/ic_input_add"
+        app:backgroundTint="#FFCA00"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="75dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
