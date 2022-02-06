@@ -19,6 +19,7 @@ import com.example.coolstorygame.schema.request.RequestCreate;
 import com.example.coolstorygame.schema.request.RequestRegister;
 import com.example.coolstorygame.schema.response.Player;
 import com.example.coolstorygame.schema.response.Room;
+import com.example.coolstorygame.utils.Session;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.IOException;
@@ -30,6 +31,8 @@ public class HomeFragment extends Fragment {
 
     private HomeViewModel homeViewModel;
     private FragmentHomeBinding binding;
+
+    private Session session;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -67,6 +70,7 @@ public class HomeFragment extends Fragment {
     private void handleCreateRoom(View v) {
         String body = new RequestCreate().toJson();
 
+        session = new Session(getActivity());
         RoomProvider.post(  "new", body, this::onCreateRoom);
     }
 
@@ -75,6 +79,8 @@ public class HomeFragment extends Fragment {
 
         if (response.code() == 200) {
             Room room = Room.fromJson(body);
+
+            session.setRoomToken(room.token);
 
             getActivity().runOnUiThread(() -> {
                 ((FloatingActionButton) getActivity().findViewById(R.id.floatingActionButtonCreateRoom)).setVisibility(View.INVISIBLE);
@@ -104,8 +110,10 @@ public class HomeFragment extends Fragment {
         if (response.code() == 200) {
             Player person = Player.fromJson(body);
 
+            session.setPlayerId(person.id);
+            session.setPlayerToken(person.token);
+            System.out.println(session.getRoomToken());
             getActivity().runOnUiThread(() -> {
-                // todo
                 ((TextView) getActivity().findViewById(R.id.textStatus)).setText(person.toString());
             });
         } else {
