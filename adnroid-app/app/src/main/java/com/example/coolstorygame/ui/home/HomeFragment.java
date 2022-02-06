@@ -15,6 +15,7 @@ import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.coolstorygame.R;
 import com.example.coolstorygame.api.RoomProvider;
@@ -25,6 +26,7 @@ import com.example.coolstorygame.schema.request.RequestStart;
 import com.example.coolstorygame.schema.request.RequestStatus;
 import com.example.coolstorygame.schema.response.Player;
 import com.example.coolstorygame.schema.response.Room;
+import com.example.coolstorygame.schema.response.Status;
 import com.example.coolstorygame.utils.Session;
 import com.example.coolstorygame.utils.Timeout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -122,6 +124,7 @@ public class HomeFragment extends Fragment {
             session.setString(Session.Field.playerId,player.id);
             session.setString(Session.Field.playerToken, player.token);
             session.setString(Session.Field.roomId, player.roomId);
+            session.setString(Session.Field.status, Status.REGISTRATION.toString());
 
             updateStatus();
         } else {
@@ -145,24 +148,35 @@ public class HomeFragment extends Fragment {
         if (code == 200) {
             Room room = Room.fromJson(body);
 
-            StringJoiner roomStatus = new StringJoiner("\n", "", "");
-            roomStatus.add("Статус: " + room.status);
-            roomStatus.add("Игроки:");
 
-            room.playerIds.forEach(roomStatus::add);
-
-            Timeout.setTimeout(this::updateStatus, 2000);
 
             getActivity().runOnUiThread(() -> {
-                ((TextView) getActivity().findViewById(R.id.playerList)).setText(roomStatus.toString());
-                ((EditText) getActivity().findViewById(R.id.editTextRoomId)).setVisibility(View.GONE);
-                ((EditText) getActivity().findViewById(R.id.editTextPlayerName)).setVisibility(View.GONE);
-                ((Button) getActivity().findViewById(R.id.buttonRegister)).setVisibility(View.GONE);
+                StringJoiner roomStatus = new StringJoiner("\n", "", "");
+                roomStatus.add("Статус: " + room.status);
+                roomStatus.add("Игроки:");
 
-                if (session.has(Session.Field.roomToken)) {
-                    ((Button) getActivity().findViewById(R.id.buttonStart)).setVisibility(View.VISIBLE);
+                room.playerIds.forEach(roomStatus::add);
+
+                if (session.getString(Session.Field.status).equals(Status.REGISTRATION.toString())) {
+                    ((TextView) getActivity().findViewById(R.id.playerList)).setText(roomStatus.toString());
+
+                    ((EditText) getActivity().findViewById(R.id.editTextRoomId)).setVisibility(View.GONE);
+                    ((EditText) getActivity().findViewById(R.id.editTextPlayerName)).setVisibility(View.GONE);
+                    ((Button) getActivity().findViewById(R.id.buttonRegister)).setVisibility(View.GONE);
+
+                    if (session.has(Session.Field.roomToken)) {
+                        ((Button) getActivity().findViewById(R.id.buttonStart)).setVisibility(View.VISIBLE);
+                    }
+
+                    if (room.status == Status.GAME) {
+                        session.setString(Session.Field.status, Status.GAME.toString());
+                        NavHostFragment.findNavController(this).navigate(R.id.action_navigation_home_to_navigation_game);
+                    }
                 }
             });
+            if (session.getString(Session.Field.status).equals(Status.REGISTRATION.toString())) {
+                Timeout.setTimeout(this::updateStatus, 2000);
+            }
         } else {
             StringBuilder sb = new StringBuilder();
             sb.append(code).append(": ").append(body);
