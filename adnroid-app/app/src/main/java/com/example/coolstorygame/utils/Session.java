@@ -5,33 +5,48 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 public class Session {
-    private SharedPreferences prefs;
+    private final SharedPreferences prefs;
+
+    public enum Field {
+        roomId,
+        roomToken,
+        playerId,
+        playerToken
+    }
 
     public Session(Context cntx) {
         prefs = PreferenceManager.getDefaultSharedPreferences(cntx);
     }
 
-    public String getRoomToken() {
-        return prefs.getString("roomToken","");
+    public String getString(Field key) {
+        return prefs.getString(key.toString(), "");
     }
 
-    public void setRoomToken(String username) {
-        prefs.edit().putString("roomToken", username).apply();
+    public void setString(Field key, String value) {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(" ").append("\n")
+                .append("==== Storage ====").append("\n")
+                .append("Key: ").append(key).append("\n")
+                .append("Value: ").append(value);
+
+        System.out.println(sb);
+        prefs.edit().putString(key.toString(), value).commit();
     }
 
-    public String getPlayerId() {
-        return prefs.getString("playerId","");
+    public boolean has(Field key) {
+        return prefs.contains(key.toString());
     }
 
-    public void setPlayerId(String username) {
-        prefs.edit().putString("playerId", username).apply();
-    }
+    public void clearAll() {
+        StringBuilder sb = new StringBuilder();
 
-    public String getPlayerToken() {
-        return prefs.getString("playerToken","");
-    }
+        sb.append(" ").append("\n")
+                .append("==== Storage ====").append("\n")
+                .append("Cleared all");
 
-    public void setPlayerToken(String username) {
-        prefs.edit().putString("playerToken", username).apply();
+        System.out.println(sb);
+
+        prefs.edit().clear().apply();
     }
 }

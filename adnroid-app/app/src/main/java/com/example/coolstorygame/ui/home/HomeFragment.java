@@ -1,13 +1,17 @@
 package com.example.coolstorygame.ui.home;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -17,15 +21,15 @@ import com.example.coolstorygame.api.RoomProvider;
 import com.example.coolstorygame.databinding.FragmentHomeBinding;
 import com.example.coolstorygame.schema.request.RequestCreate;
 import com.example.coolstorygame.schema.request.RequestRegister;
+import com.example.coolstorygame.schema.request.RequestStart;
+import com.example.coolstorygame.schema.request.RequestStatus;
 import com.example.coolstorygame.schema.response.Player;
 import com.example.coolstorygame.schema.response.Room;
 import com.example.coolstorygame.utils.Session;
+import com.example.coolstorygame.utils.Timeout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.io.IOException;
-
-import okhttp3.Call;
-import okhttp3.Response;
+import java.util.StringJoiner;
 
 public class HomeFragment extends Fragment {
 
@@ -42,6 +46,9 @@ public class HomeFragment extends Fragment {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
+        session = new Session(getActivity());
+        session.clearAll();
+
         final TextView textView = binding.textStatus;
         homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
@@ -57,7 +64,8 @@ public class HomeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         binding.buttonRegister.setOnClickListener(this::handleRegister);
-        binding.floatingActionButtonCreateRoom.setOnClickListener(this::handleCreateRoom);
+        binding.buttonCreateRoom.setOnClickListener(this::handleCreateRoom);
+        binding.buttonStart.setOnClickListener(this::handleStart);
     }
 
     @Override
@@ -70,25 +78,28 @@ public class HomeFragment extends Fragment {
     private void handleCreateRoom(View v) {
         String body = new RequestCreate().toJson();
 
-        session = new Session(getActivity());
-        RoomProvider.post(  "new", body, this::onCreateRoom);
+        RoomProvider.post("new", body, this::onCreateRoom);
     }
 
-    public void onCreateRoom(Call call, final Response response) throws IOException {
-        String body = response.body().string();
+    private void handleStart(View v) {
+        String body = new RequestStart(session.getString(Session.Field.roomToken)).toJson();
 
-        if (response.code() == 200) {
+        RoomProvider.post(session.getString(Session.Field.roomId) + "/start", body, this::onReceivedStatus);
+    }
+
+    public void onCreateRoom(Integer code, String body) {
+        if (code == 200) {
             Room room = Room.fromJson(body);
 
-            session.setRoomToken(room.token);
+            session.setString(Session.Field.roomToken, room.token);
 
             getActivity().runOnUiThread(() -> {
-                ((FloatingActionButton) getActivity().findViewById(R.id.floatingActionButtonCreateRoom)).setVisibility(View.INVISIBLE);
+                ((FloatingActionButton) getActivity().findViewById(R.id.buttonCreateRoom)).setVisibility(View.INVISIBLE);
                 ((TextView) getActivity().findViewById(R.id.editTextRoomId)).setText(room.id);
             });
         } else {
             StringBuilder sb = new StringBuilder();
-            sb.append(response.code()).append(": ").append(body);
+            sb.append(code).append(": ").append(body);
 
             getActivity().runOnUiThread(() -> {
                 ((TextView) getActivity().findViewById(R.id.textStatus)).setText(sb);
@@ -104,21 +115,57 @@ public class HomeFragment extends Fragment {
         RoomProvider.post(roomId + "/register", body, this::onRegister);
     }
 
-    public void onRegister(Call call, final Response response) throws IOException {
-        String body = response.body().string();
+    public void onRegister(Integer code, String body) {
+        if (code == 200) {
+            Player player = Player.fromJson(body);
 
-        if (response.code() == 200) {
-            Player person = Player.fromJson(body);
+            session.setString(Session.Field.playerId,player.id);
+            session.setString(Session.Field.playerToken, player.token);
+            session.setString(Session.Field.roomId, player.roomId);
 
-            session.setPlayerId(person.id);
-            session.setPlayerToken(person.token);
-            System.out.println(session.getRoomToken());
+            updateStatus();
+        } else {
+            StringBuilder sb = new StringBuilder();
+            sb.append(code).append(": ").append(body);
+
             getActivity().runOnUiThread(() -> {
-                ((TextView) getActivity().findViewById(R.id.textStatus)).setText(person.toString());
+                ((TextView) getActivity().findViewById(R.id.textStatus)).setText(sb);
+            });
+        }
+    }
+
+    private void updateStatus() {
+        String body = new RequestStatus(session.getString(Session.Field.playerId), session.getString(Session.Field.playerToken)).toJson();
+
+        RoomProvider.post(session.getString(Session.Field.roomId) + "/status", body, this::onReceivedStatus);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public void onReceivedStatus(Integer code, String body) {
+        if (code == 200) {
+            Room room = Room.fromJson(body);
+
+            StringJoiner roomStatus = new StringJoiner("\n", "", "");
+            roomStatus.add("Статус: " + room.status);
+            roomStatus.add("Игроки:");
+
+            room.playerIds.forEach(roomStatus::add);
+
+            Timeout.setTimeout(this::updateStatus, 2000);
+
+            getActivity().runOnUiThread(() -> {
+                ((TextView) getActivity().findViewById(R.id.playerList)).setText(roomStatus.toString());
+                ((EditText) getActivity().findViewById(R.id.editTextRoomId)).setVisibility(View.GONE);
+                ((EditText) getActivity().findViewById(R.id.editTextPlayerName)).setVisibility(View.GONE);
+                ((Button) getActivity().findViewById(R.id.buttonRegister)).setVisibility(View.GONE);
+
+                if (session.has(Session.Field.roomToken)) {
+                    ((Button) getActivity().findViewById(R.id.buttonStart)).setVisibility(View.VISIBLE);
+                }
             });
         } else {
             StringBuilder sb = new StringBuilder();
-            sb.append(response.code()).append(": ").append(body);
+            sb.append(code).append(": ").append(body);
 
             getActivity().runOnUiThread(() -> {
                 ((TextView) getActivity().findViewById(R.id.textStatus)).setText(sb);
