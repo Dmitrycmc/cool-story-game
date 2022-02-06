@@ -39,7 +39,7 @@ public class HomeFragment extends Fragment {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textHome;
+        final TextView textView = binding.textStatus;
         homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
@@ -53,8 +53,8 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        binding.button.setOnClickListener(this::onClick);
-        binding.floatingActionButton4.setOnClickListener(this::createRoom);
+        binding.buttonRegister.setOnClickListener(this::handleRegister);
+        binding.floatingActionButtonCreateRoom.setOnClickListener(this::handleCreateRoom);
     }
 
     @Override
@@ -64,55 +64,56 @@ public class HomeFragment extends Fragment {
         binding = null;
     }
 
-    private void onClick(View v) {
-        String roomId = binding.editTextTextRoom.getText().toString();
-        String name = binding.editTextTextPersonName.getText().toString();
-        String body = new RequestRegister(name).toJson();
-
-        RoomProvider.post(roomId + "/register", body, this::onResponse);
-    }
-
-    private void createRoom(View v) {
+    private void handleCreateRoom(View v) {
         String body = new RequestCreate().toJson();
 
-        RoomProvider.post(  "new", body, this::onRoomCreated);
+        RoomProvider.post(  "new", body, this::onCreateRoom);
     }
 
-    public void onResponse(Call call, final Response response) throws IOException {
-        String body = response.body().string();
-
-        if (response.code() == 200) {
-            Player person = Player.fromJson(body);
-
-            getActivity().runOnUiThread(() -> {
-                ((TextView) getActivity().findViewById(R.id.text_home)).setText(person.toString());
-            });
-        } else {
-            StringBuilder sb = new StringBuilder();
-            sb.append(response.code()).append(": ").append(body);
-
-            getActivity().runOnUiThread(() -> {
-                ((TextView) getActivity().findViewById(R.id.text_home)).setText(sb);
-            });
-        }
-    }
-
-    public void onRoomCreated(Call call, final Response response) throws IOException {
+    public void onCreateRoom(Call call, final Response response) throws IOException {
         String body = response.body().string();
 
         if (response.code() == 200) {
             Room room = Room.fromJson(body);
 
             getActivity().runOnUiThread(() -> {
-                ((FloatingActionButton) getActivity().findViewById(R.id.floatingActionButton4)).setVisibility(View.INVISIBLE);
-                ((TextView) getActivity().findViewById(R.id.editTextTextRoom)).setText(room.id);
+                ((FloatingActionButton) getActivity().findViewById(R.id.floatingActionButtonCreateRoom)).setVisibility(View.INVISIBLE);
+                ((TextView) getActivity().findViewById(R.id.editTextRoomId)).setText(room.id);
             });
         } else {
             StringBuilder sb = new StringBuilder();
             sb.append(response.code()).append(": ").append(body);
 
             getActivity().runOnUiThread(() -> {
-                ((TextView) getActivity().findViewById(R.id.text_home)).setText(sb);
+                ((TextView) getActivity().findViewById(R.id.textStatus)).setText(sb);
+            });
+        }
+    }
+
+    private void handleRegister(View v) {
+        String roomId = binding.editTextRoomId.getText().toString();
+        String name = binding.editTextPlayerName.getText().toString();
+        String body = new RequestRegister(name).toJson();
+
+        RoomProvider.post(roomId + "/register", body, this::onRegister);
+    }
+
+    public void onRegister(Call call, final Response response) throws IOException {
+        String body = response.body().string();
+
+        if (response.code() == 200) {
+            Player person = Player.fromJson(body);
+
+            getActivity().runOnUiThread(() -> {
+                // todo
+                ((TextView) getActivity().findViewById(R.id.textStatus)).setText(person.toString());
+            });
+        } else {
+            StringBuilder sb = new StringBuilder();
+            sb.append(response.code()).append(": ").append(body);
+
+            getActivity().runOnUiThread(() -> {
+                ((TextView) getActivity().findViewById(R.id.textStatus)).setText(sb);
             });
         }
     }
