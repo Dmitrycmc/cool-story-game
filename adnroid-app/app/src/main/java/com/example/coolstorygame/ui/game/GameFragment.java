@@ -1,4 +1,4 @@
-package com.example.coolstorygame.ui.outer;
+package com.example.coolstorygame.ui.game;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,23 +12,23 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.coolstorygame.databinding.FragmentOuterBinding;
+import com.example.coolstorygame.databinding.FragmentGameBinding;
 
-public class OuterFragment extends Fragment {
+public class GameFragment extends Fragment {
 
-    private OuterViewModel outerViewModel;
-    private FragmentOuterBinding binding;
+    private GameViewModel gameViewModel;
+    private FragmentGameBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        outerViewModel =
-                new ViewModelProvider(this).get(OuterViewModel.class);
+        gameViewModel =
+                new ViewModelProvider(this).get(GameViewModel.class);
 
-        binding = FragmentOuterBinding.inflate(inflater, container, false);
+        binding = FragmentGameBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textOuter;
-        outerViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
+        final TextView textView = binding.textGame;
+        gameViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
                 textView.setText(s);

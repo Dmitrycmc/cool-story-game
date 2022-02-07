@@ -7,7 +7,7 @@
     tools:context=".ui.questions.QuestionsFragment">
 
     <fragment
-        android:id="@+id/nav_host_fragment_outer"
+        android:id="@+id/nav_host_fragment_game"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -26,12 +26,12 @@
         app:layout_constraintBottom_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/nav_host_fragment_outer"
+        app:layout_constraintTop_toBottomOf="@id/nav_host_fragment_game"
         android:layout_height="match_parent"
         android:layout_width="match_parent" />
 
     <TextView
-        android:id="@+id/text_outer"
+        android:id="@+id/text_game"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
