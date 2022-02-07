@@ -58,6 +58,6 @@ public class RoomProvider {
     }
 
     public static void post(String endpoint, String body) {
-        post(endpoint, body, (code, body1) -> {}, e -> {});
+        post(endpoint, body, (code, body1) -> {});
     }
 }

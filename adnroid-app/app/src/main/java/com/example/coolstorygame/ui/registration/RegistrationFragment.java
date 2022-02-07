@@ -4,18 +4,14 @@ import static androidx.core.content.ContextCompat.getSystemService;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
@@ -24,15 +20,8 @@ import com.example.coolstorygame.R;
 import com.example.coolstorygame.api.RoomProvider;
 import com.example.coolstorygame.databinding.FragmentRegistrationBinding;
 import com.example.coolstorygame.schema.request.RequestRegister;
-import com.example.coolstorygame.schema.request.RequestStart;
-import com.example.coolstorygame.schema.request.RequestStatus;
 import com.example.coolstorygame.schema.response.Player;
-import com.example.coolstorygame.schema.response.Room;
-import com.example.coolstorygame.schema.response.Status;
 import com.example.coolstorygame.utils.Session;
-import com.example.coolstorygame.utils.Timeout;
-
-import java.util.StringJoiner;
 
 public class RegistrationFragment extends Fragment {
 
@@ -76,12 +65,6 @@ public class RegistrationFragment extends Fragment {
         super.onDestroyView();
 
         binding = null;
-    }
-
-    private void handleStart(View v) {
-        String body = new RequestStart(session.getString(Session.Field.roomToken)).toJson();
-
-        RoomProvider.post(session.getString(Session.Field.roomId) + "/start", body);
     }
 
     private void handleRegister(View v) {

@@ -11,7 +11,8 @@ public class Session {
         roomId,
         roomToken,
         playerId,
-        playerToken
+        playerToken,
+        status
     }
 
     public Session(Context cntx) {

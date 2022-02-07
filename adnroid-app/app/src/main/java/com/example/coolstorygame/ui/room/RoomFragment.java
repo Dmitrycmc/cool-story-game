@@ -16,7 +16,9 @@ import com.example.coolstorygame.R;
 import com.example.coolstorygame.api.RoomProvider;
 import com.example.coolstorygame.databinding.FragmentRoomBinding;
 import com.example.coolstorygame.schema.request.RequestCreate;
+import com.example.coolstorygame.schema.request.RequestStatus;
 import com.example.coolstorygame.schema.response.Room;
+import com.example.coolstorygame.schema.response.Status;
 import com.example.coolstorygame.utils.Session;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -57,7 +59,7 @@ public class RoomFragment extends Fragment {
     }
 
     private void handleEnterRoom(View v) {
-        String body = new RequestCreate().toJson();
+        String body = new RequestStatus().toJson();
 
         String roomId = binding.editTextRoomId.getText().toString();
 
@@ -75,6 +77,7 @@ public class RoomFragment extends Fragment {
 
             getActivity().runOnUiThread(() -> {
                 ((BottomNavigationView)getActivity().findViewById(R.id.nav_view)).setVisibility(View.GONE);
+                session.setString(Session.Field.status, Status.REGISTRATION.toString());
                 NavHostFragment.findNavController(this).navigate(R.id.action_navigation_room_to_navigation_game);
             });
         } else {

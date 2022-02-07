@@ -12,6 +12,9 @@ public class RequestStatus extends ToJson {
         this.token = token;
     }
 
+    public RequestStatus() {
+    }
+
     public String toJson() {
         Gson g = new Gson();
         return g.toJson(this);
