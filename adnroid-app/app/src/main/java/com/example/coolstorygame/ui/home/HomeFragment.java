@@ -170,7 +170,7 @@ public class HomeFragment extends Fragment {
 
                     if (room.status == Status.GAME) {
                         session.setString(Session.Field.status, Status.GAME.toString());
-                        NavHostFragment.findNavController(this).navigate(R.id.action_navigation_home_to_navigation_game);
+                        NavHostFragment.findNavController(this).navigate(R.id.action_navigation_home_to_navigation_questions);
                     }
                 }
             });

@@ -11,13 +11,13 @@
         android:label="@string/title_home"
         tools:layout="@layout/fragment_home" >
         <action
-            android:id="@+id/action_navigation_home_to_navigation_game"
-            app:destination="@id/navigation_game" />
+            android:id="@+id/action_navigation_home_to_navigation_questions"
+            app:destination="@id/navigation_questions" />
     </fragment>
 
     <fragment
-        android:id="@+id/navigation_game"
-        android:name="com.example.coolstorygame.ui.game.GameFragment"
-        android:label="@string/title_game"
-        tools:layout="@layout/fragment_game" />
+        android:id="@+id/navigation_questions"
+        android:name="com.example.coolstorygame.ui.questions.QuestionsFragment"
+        android:label="@string/title_questions"
+        tools:layout="@layout/fragment_questions" />
 </navigation>

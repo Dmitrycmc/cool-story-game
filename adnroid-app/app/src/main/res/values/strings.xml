@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">coolStoryGame</string>
     <string name="title_home">Регистрация</string>
-    <string name="title_game">Игра</string>
+    <string name="title_questions">Вопросы</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_outer">Outer</string>
     <string name="title_status">Status</string>

@@ -1,16 +1,16 @@
-package com.example.coolstorygame.ui.game;
+package com.example.coolstorygame.ui.questions;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class GameViewModel extends ViewModel {
+public class QuestionsViewModel extends ViewModel {
 
     private MutableLiveData<String> mText;
 
-    public GameViewModel() {
+    public QuestionsViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is game fragment");
+        mText.setValue("This is questions fragment");
     }
 
     public LiveData<String> getText() {
