@@ -1,4 +1,4 @@
-package com.example.coolstorygame.ui.home;
+package com.example.coolstorygame.ui.registration;
 
 import static androidx.core.content.ContextCompat.getSystemService;
 
@@ -22,7 +22,7 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.coolstorygame.R;
 import com.example.coolstorygame.api.RoomProvider;
-import com.example.coolstorygame.databinding.FragmentHomeBinding;
+import com.example.coolstorygame.databinding.FragmentRegistrationBinding;
 import com.example.coolstorygame.schema.request.RequestRegister;
 import com.example.coolstorygame.schema.request.RequestStart;
 import com.example.coolstorygame.schema.request.RequestStatus;
@@ -34,19 +34,19 @@ import com.example.coolstorygame.utils.Timeout;
 
 import java.util.StringJoiner;
 
-public class HomeFragment extends Fragment {
+public class RegistrationFragment extends Fragment {
 
-    private HomeViewModel homeViewModel;
-    private FragmentHomeBinding binding;
+    private RegistrationViewModel registrationViewModel;
+    private FragmentRegistrationBinding binding;
 
     private Session session;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        homeViewModel =
-                new ViewModelProvider(this).get(HomeViewModel.class);
+        registrationViewModel =
+                new ViewModelProvider(this).get(RegistrationViewModel.class);
 
-        binding = FragmentHomeBinding.inflate(inflater, container, false);
+        binding = FragmentRegistrationBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
         session = new Session(getActivity());
@@ -145,7 +145,7 @@ public class HomeFragment extends Fragment {
 
                     if (room.status == Status.GAME) {
                         session.setString(Session.Field.status, Status.GAME.toString());
-                        NavHostFragment.findNavController(this).navigate(R.id.action_navigation_home_to_navigation_questions);
+                        NavHostFragment.findNavController(this).navigate(R.id.action_navigation_registration_to_navigation_questions);
                     }
                 }
             });
