@@ -9,15 +9,24 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 
+import com.example.coolstorygame.R;
+import com.example.coolstorygame.api.RoomProvider;
 import com.example.coolstorygame.databinding.FragmentRoomBinding;
+import com.example.coolstorygame.schema.request.RequestCreate;
+import com.example.coolstorygame.schema.response.Room;
+import com.example.coolstorygame.utils.Session;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class RoomFragment extends Fragment {
 
     private RoomViewModel roomViewModel;
     private FragmentRoomBinding binding;
+
+    private Session session;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -25,16 +34,58 @@ public class RoomFragment extends Fragment {
                 new ViewModelProvider(this).get(RoomViewModel.class);
 
         binding = FragmentRoomBinding.inflate(inflater, container, false);
+
         View root = binding.getRoot();
 
-        final TextView textView = binding.textRoom;
-        roomViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
-            }
-        });
+        session = new Session(getActivity());
+        session.clearAll();
+
         return root;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        binding.buttonCreateRoom.setOnClickListener(this::handleCreateRoom);
+        binding.buttonRegister.setOnClickListener(this::handleEnterRoom);
+    }
+
+    private void handleCreateRoom(View v) {
+        String body = new RequestCreate().toJson();
+
+        RoomProvider.post("new", body, this::onReceiveRoom);
+    }
+
+    private void handleEnterRoom(View v) {
+        String body = new RequestCreate().toJson();
+
+        String roomId = binding.editTextRoomId.getText().toString();
+
+        RoomProvider.post(roomId + "/status", body, this::onReceiveRoom);
+    }
+
+    public void onReceiveRoom(Integer code, String body) {
+        if (code == 200) {
+            Room room = Room.fromJson(body);
+
+            if (room.token != null) {
+                session.setString(Session.Field.roomToken, room.token);
+            }
+            session.setString(Session.Field.roomId, room.id);
+
+            getActivity().runOnUiThread(() -> {
+                ((BottomNavigationView)getActivity().findViewById(R.id.nav_view)).setVisibility(View.GONE);
+                NavHostFragment.findNavController(this).navigate(R.id.action_navigation_room_to_navigation_game);
+            });
+        } else {
+            StringBuilder sb = new StringBuilder();
+            sb.append(code).append(": ").append(body);
+
+            getActivity().runOnUiThread(() -> {
+                ((TextView) getActivity().findViewById(R.id.textStatus)).setText(sb);
+            });
+        }
     }
 
     @Override

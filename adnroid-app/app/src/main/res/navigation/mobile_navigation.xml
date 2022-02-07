@@ -6,10 +6,20 @@
     app:startDestination="@+id/navigation_room">
 
     <fragment
+        android:id="@+id/navigation_game"
+        android:name="com.example.coolstorygame.ui.game.GameFragment"
+        android:label="@string/title_game"
+        tools:layout="@layout/fragment_game" />
+
+    <fragment
         android:id="@+id/navigation_room"
         android:name="com.example.coolstorygame.ui.room.RoomFragment"
         android:label="@string/title_room"
-        tools:layout="@layout/fragment_room" />
+        tools:layout="@layout/fragment_room" >
+        <action
+            android:id="@+id/action_navigation_room_to_navigation_game"
+            app:destination="@id/navigation_game" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_dashboard"
