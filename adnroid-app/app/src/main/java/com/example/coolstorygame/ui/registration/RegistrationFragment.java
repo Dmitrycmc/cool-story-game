@@ -69,7 +69,6 @@ public class RegistrationFragment extends Fragment {
         //todo: show notification code in clipboard
 
         binding.buttonRegister.setOnClickListener(this::handleRegister);
-        binding.buttonStart.setOnClickListener(this::handleStart);
     }
 
     @Override
@@ -101,7 +100,7 @@ public class RegistrationFragment extends Fragment {
             session.setString(Session.Field.playerToken, player.token);
 
             getActivity().runOnUiThread(() -> {
-                NavHostFragment.findNavController(this).navigate(R.id.action_navigation_registration_to_navigation_questions);
+                NavHostFragment.findNavController(this).navigate(R.id.action_navigation_registration_to_navigation_waiting);
             });
 
         } else {
