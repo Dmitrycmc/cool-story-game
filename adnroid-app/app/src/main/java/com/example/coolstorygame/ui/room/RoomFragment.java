@@ -19,7 +19,6 @@ import com.example.coolstorygame.schema.request.RequestCreate;
 import com.example.coolstorygame.schema.response.Room;
 import com.example.coolstorygame.utils.Session;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class RoomFragment extends Fragment {
 

@@ -56,4 +56,8 @@ public class RoomProvider {
     public static void post(String endpoint, String body, SuccessHandler successHandler) {
         post(endpoint, body, successHandler, e -> {});
     }
+
+    public static void post(String endpoint, String body) {
+        post(endpoint, body, (code, body1) -> {}, e -> {});
+    }
 }

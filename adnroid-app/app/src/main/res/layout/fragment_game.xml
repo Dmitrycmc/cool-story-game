@@ -6,42 +6,35 @@
     android:layout_height="match_parent"
     tools:context=".ui.questions.QuestionsFragment">
 
-    <fragment
-        android:id="@+id/nav_host_fragment_game"
-        android:name="androidx.navigation.fragment.NavHostFragment"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:defaultNavHost="true"
-        app:layout_constraintBottom_toTopOf="@id/navigation_status"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:navGraph="@navigation/game_navigation" />
+        android:orientation="vertical" >
 
-    <fragment
-        android:id="@+id/navigation_status"
-        android:name="com.example.coolstorygame.ui.status.StatusFragment"
-        android:label="@string/title_status"
-        tools:layout="@layout/fragment_status"
-        app:layout_constraintBottom_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/nav_host_fragment_game"
-        android:layout_height="match_parent"
-        android:layout_width="match_parent" />
+        <fragment
+            android:id="@+id/nav_host_fragment_game"
+            android:name="androidx.navigation.fragment.NavHostFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:defaultNavHost="true"
+            app:layout_constraintBottom_toBottomOf="@id/navigation_status"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:navGraph="@navigation/game_navigation" />
 
-    <TextView
-        android:id="@+id/text_game"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <fragment
+            android:id="@+id/navigation_status"
+            android:name="com.example.coolstorygame.ui.status.StatusFragment"
+            android:label="@string/title_status"
+            tools:layout="@layout/fragment_status"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent" />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

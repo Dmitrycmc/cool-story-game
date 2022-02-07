@@ -82,7 +82,7 @@ public class RegistrationFragment extends Fragment {
     private void handleStart(View v) {
         String body = new RequestStart(session.getString(Session.Field.roomToken)).toJson();
 
-        RoomProvider.post(session.getString(Session.Field.roomId) + "/start", body, this::onReceivedStatus);
+        RoomProvider.post(session.getString(Session.Field.roomId) + "/start", body);
     }
 
     private void handleRegister(View v) {
@@ -99,59 +99,11 @@ public class RegistrationFragment extends Fragment {
 
             session.setString(Session.Field.playerId,player.id);
             session.setString(Session.Field.playerToken, player.token);
-            session.setString(Session.Field.status, Status.REGISTRATION.toString());
-
-            updateStatus();
-        } else {
-            StringBuilder sb = new StringBuilder();
-            sb.append(code).append(": ").append(body);
 
             getActivity().runOnUiThread(() -> {
-                ((TextView) getActivity().findViewById(R.id.textStatus)).setText(sb);
+                NavHostFragment.findNavController(this).navigate(R.id.action_navigation_registration_to_navigation_questions);
             });
-        }
-    }
 
-    private void updateStatus() {
-        String body = new RequestStatus(session.getString(Session.Field.playerId), session.getString(Session.Field.playerToken)).toJson();
-
-        RoomProvider.post(session.getString(Session.Field.roomId) + "/status", body, this::onReceivedStatus);
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    public void onReceivedStatus(Integer code, String body) {
-        if (code == 200) {
-            Room room = Room.fromJson(body);
-
-
-
-            getActivity().runOnUiThread(() -> {
-                StringJoiner roomStatus = new StringJoiner("\n", "", "");
-                roomStatus.add("Статус: " + room.status);
-                roomStatus.add("Игроки:");
-
-                room.playerIds.forEach(roomStatus::add);
-
-                if (session.getString(Session.Field.status).equals(Status.REGISTRATION.toString())) {
-                    ((TextView) getActivity().findViewById(R.id.playerList)).setText(roomStatus.toString());
-
-                    ((EditText) getActivity().findViewById(R.id.editTextRoomId)).setVisibility(View.GONE);
-                    ((EditText) getActivity().findViewById(R.id.editTextPlayerName)).setVisibility(View.GONE);
-                    ((Button) getActivity().findViewById(R.id.buttonRegister)).setVisibility(View.GONE);
-
-                    if (session.has(Session.Field.roomToken)) {
-                        ((Button) getActivity().findViewById(R.id.buttonStart)).setVisibility(View.VISIBLE);
-                    }
-
-                    if (room.status == Status.GAME) {
-                        session.setString(Session.Field.status, Status.GAME.toString());
-                        NavHostFragment.findNavController(this).navigate(R.id.action_navigation_registration_to_navigation_questions);
-                    }
-                }
-            });
-            if (session.getString(Session.Field.status).equals(Status.REGISTRATION.toString())) {
-                Timeout.setTimeout(this::updateStatus, 2000);
-            }
         } else {
             StringBuilder sb = new StringBuilder();
             sb.append(code).append(": ").append(body);
