@@ -1,10 +1,11 @@
 package com.example.coolstorygame.schema.response;
 
+import com.example.coolstorygame.schema.ToJson;
 import com.google.gson.Gson;
 
 import java.util.List;
 
-public class Room {
+public class Room extends ToJson {
     public String id;
     public Status status;
     public String token;

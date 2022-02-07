@@ -23,7 +23,7 @@ public class WaitingFragment extends Fragment {
     private WaitingViewModel waitingViewModel;
     private FragmentWaitingBinding binding;
 
-    Session session;
+    private Session session;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {

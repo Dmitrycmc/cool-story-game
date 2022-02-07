@@ -18,6 +18,8 @@ import com.example.coolstorygame.databinding.FragmentStatusBinding;
 import com.example.coolstorygame.schema.request.RequestStatus;
 import com.example.coolstorygame.schema.response.Room;
 import com.example.coolstorygame.schema.response.Status;
+import com.example.coolstorygame.ui.questions.QuestionsFragment;
+import com.example.coolstorygame.ui.waiting.WaitingFragment;
 import com.example.coolstorygame.utils.Session;
 import com.example.coolstorygame.utils.Timeout;
 
@@ -28,7 +30,7 @@ public class StatusFragment extends Fragment {
     private StatusViewModel statusViewModel;
     private FragmentStatusBinding binding;
 
-    Session session;
+    private Session session;
     public static StatusFragment instance;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -61,6 +63,7 @@ public class StatusFragment extends Fragment {
     private void onResponse(Integer code, String body) {
         if (code == 200) {
             updateStatus(body);
+
             Timeout.setTimeout(this::statusPolling, 2000);
         } else {
             StringBuilder sb = new StringBuilder();
@@ -74,6 +77,12 @@ public class StatusFragment extends Fragment {
 
     public void updateStatus(String body) {
         Room room = Room.fromJson(body);
+
+        if (QuestionsFragment.instance != null) {
+            QuestionsFragment.instance.update(room);
+        }
+
+        session.setRoom(room);
 
         getActivity().runOnUiThread(() -> {
             StringJoiner roomStatus = new StringJoiner("\n", "", "");
