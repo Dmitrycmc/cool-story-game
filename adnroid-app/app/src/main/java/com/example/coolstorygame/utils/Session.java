@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import com.example.coolstorygame.schema.response.Room;
+import com.example.coolstorygame.schema.response.Questions;
 
 public class Session {
     private final SharedPreferences prefs;
@@ -15,7 +15,10 @@ public class Session {
         playerId,
         playerToken,
         status,
-        room
+        questionsSetId,
+        questions,
+        currentPlayerNumber,
+        currentQuestionNumber
     }
 
     public Session(Context cntx) {
@@ -38,21 +41,37 @@ public class Session {
         prefs.edit().putString(key.toString(), value).commit();
     }
 
-    public void setRoom(Room room) {
-        String key = Field.room.toString();
+    public Integer getInt(Field key) {
+        return prefs.getInt(key.toString(), 0);
+    }
+
+    public void setInt(Field key, Integer value) {
         StringBuilder sb = new StringBuilder();
 
         sb.append(" ").append("\n")
                 .append("==== Storage ====").append("\n")
                 .append("Key: ").append(key).append("\n")
-                .append("Value: ").append(room);
+                .append("Value: ").append(value);
 
         System.out.println(sb);
-        prefs.edit().putString(key, room.toJson()).commit();
+        prefs.edit().putInt(key.toString(), value).commit();
     }
 
-    public Room getRoom() {
-        return Room.fromJson(getString(Field.room));
+    public void setQuestions(Questions questions) {
+        String key = Field.questions.toString();
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(" ").append("\n")
+                .append("==== Storage ====").append("\n")
+                .append("Key: ").append(key).append("\n")
+                .append("Value: ").append(questions);
+
+        System.out.println(sb);
+        prefs.edit().putString(key, questions.toJson()).commit();
+    }
+
+    public Questions getQuestions() {
+        return Questions.fromJson(getString(Field.questions));
     }
 
     public boolean has(Field key) {

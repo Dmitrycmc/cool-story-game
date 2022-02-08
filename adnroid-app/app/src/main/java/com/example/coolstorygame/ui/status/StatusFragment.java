@@ -13,13 +13,12 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.coolstorygame.R;
-import com.example.coolstorygame.api.RoomProvider;
+import com.example.coolstorygame.api.Provider;
 import com.example.coolstorygame.databinding.FragmentStatusBinding;
 import com.example.coolstorygame.schema.request.RequestStatus;
 import com.example.coolstorygame.schema.response.Room;
 import com.example.coolstorygame.schema.response.Status;
 import com.example.coolstorygame.ui.questions.QuestionsFragment;
-import com.example.coolstorygame.ui.waiting.WaitingFragment;
 import com.example.coolstorygame.utils.Session;
 import com.example.coolstorygame.utils.Timeout;
 
@@ -57,7 +56,7 @@ public class StatusFragment extends Fragment {
     private void statusPolling() {
         String body = new RequestStatus(session.getString(Session.Field.playerId), session.getString(Session.Field.playerToken)).toJson();
 
-        RoomProvider.post(session.getString(Session.Field.roomId) + "/status", body, this::onResponse);
+        Provider.room(session.getString(Session.Field.roomId) + "/status", body, this::onResponse);
     }
 
     private void onResponse(Integer code, String body) {
@@ -79,10 +78,10 @@ public class StatusFragment extends Fragment {
         Room room = Room.fromJson(body);
 
         if (QuestionsFragment.instance != null) {
-            QuestionsFragment.instance.update(room);
+            session.setInt(Session.Field.currentPlayerNumber, room.currentPlayerNumber);
+            session.setInt(Session.Field.currentQuestionNumber, room.currentQuestionNumber);
+            QuestionsFragment.instance.update();
         }
-
-        session.setRoom(room);
 
         getActivity().runOnUiThread(() -> {
             StringJoiner roomStatus = new StringJoiner("\n", "", "");

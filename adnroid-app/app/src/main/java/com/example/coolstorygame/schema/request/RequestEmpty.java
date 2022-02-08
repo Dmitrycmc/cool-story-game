@@ -3,8 +3,8 @@ package com.example.coolstorygame.schema.request;
 import com.example.coolstorygame.schema.ToJson;
 import com.google.gson.Gson;
 
-public class RequestCreate extends ToJson {
-    public RequestCreate() {
+public class RequestEmpty extends ToJson {
+    public RequestEmpty() {
     }
 
     public String toJson() {

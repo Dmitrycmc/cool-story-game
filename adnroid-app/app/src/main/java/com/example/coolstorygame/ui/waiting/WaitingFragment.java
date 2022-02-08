@@ -12,7 +12,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.coolstorygame.R;
-import com.example.coolstorygame.api.RoomProvider;
+import com.example.coolstorygame.api.Provider;
 import com.example.coolstorygame.databinding.FragmentWaitingBinding;
 import com.example.coolstorygame.schema.request.RequestStart;
 import com.example.coolstorygame.ui.status.StatusFragment;
@@ -51,7 +51,7 @@ public class WaitingFragment extends Fragment {
     private void handleStart(View v) {
         String body = new RequestStart(session.getString(Session.Field.roomToken)).toJson();
 
-        RoomProvider.post(session.getString(Session.Field.roomId) + "/start", body, this::onStart);
+        Provider.room(session.getString(Session.Field.roomId) + "/start", body, this::onStart);
     }
 
     public void onStart(Integer code, String body) {

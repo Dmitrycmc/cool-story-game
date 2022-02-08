@@ -17,10 +17,13 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.coolstorygame.R;
-import com.example.coolstorygame.api.RoomProvider;
+import com.example.coolstorygame.api.Provider;
 import com.example.coolstorygame.databinding.FragmentRegistrationBinding;
+import com.example.coolstorygame.schema.request.RequestEmpty;
 import com.example.coolstorygame.schema.request.RequestRegister;
 import com.example.coolstorygame.schema.response.Player;
+import com.example.coolstorygame.schema.response.Questions;
+import com.example.coolstorygame.schema.response.Room;
 import com.example.coolstorygame.utils.Session;
 
 public class RegistrationFragment extends Fragment {
@@ -58,6 +61,8 @@ public class RegistrationFragment extends Fragment {
         //todo: show notification code in clipboard
 
         binding.buttonRegister.setOnClickListener(this::handleRegister);
+
+        loadQuestions();
     }
 
     @Override
@@ -67,12 +72,33 @@ public class RegistrationFragment extends Fragment {
         binding = null;
     }
 
+    private void loadQuestions() {
+        String questionsSetId = session.getString(Session.Field.questionsSetId);
+
+        Provider.questions(questionsSetId, this::onQuestionsLoaded);
+    }
+
+    private void onQuestionsLoaded(Integer code, String body) {
+        if (code == 200) {
+            Questions questions = Questions.fromJson(body);
+
+            session.setQuestions(questions);
+        } else {
+            StringBuilder sb = new StringBuilder();
+            sb.append(code).append(": ").append(body);
+
+            getActivity().runOnUiThread(() -> {
+                ((TextView) getActivity().findViewById(R.id.textStatus)).setText(sb);
+            });
+        }
+    }
+
     private void handleRegister(View v) {
         String roomId = session.getString(Session.Field.roomId);
         String name = binding.editTextPlayerName.getText().toString();
         String body = new RequestRegister(name).toJson();
 
-        RoomProvider.post(roomId + "/register", body, this::onRegister);
+        Provider.room(roomId + "/register", body, this::onRegister);
     }
 
     public void onRegister(Integer code, String body) {

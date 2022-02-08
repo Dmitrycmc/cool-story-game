@@ -13,9 +13,9 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.coolstorygame.R;
-import com.example.coolstorygame.api.RoomProvider;
+import com.example.coolstorygame.api.Provider;
 import com.example.coolstorygame.databinding.FragmentRoomBinding;
-import com.example.coolstorygame.schema.request.RequestCreate;
+import com.example.coolstorygame.schema.request.RequestEmpty;
 import com.example.coolstorygame.schema.request.RequestStatus;
 import com.example.coolstorygame.schema.response.Room;
 import com.example.coolstorygame.schema.response.Status;
@@ -53,9 +53,9 @@ public class RoomFragment extends Fragment {
     }
 
     private void handleCreateRoom(View v) {
-        String body = new RequestCreate().toJson();
+        String body = new RequestEmpty().toJson();
 
-        RoomProvider.post("new", body, this::onReceiveRoom);
+        Provider.room("new", body, this::onReceiveRoom);
     }
 
     private void handleEnterRoom(View v) {
@@ -63,7 +63,7 @@ public class RoomFragment extends Fragment {
 
         String roomId = binding.editTextRoomId.getText().toString();
 
-        RoomProvider.post(roomId + "/status", body, this::onReceiveRoom);
+        Provider.room(roomId + "/status", body, this::onReceiveRoom);
     }
 
     public void onReceiveRoom(Integer code, String body) {
@@ -74,6 +74,7 @@ public class RoomFragment extends Fragment {
                 session.setString(Session.Field.roomToken, room.token);
             }
             session.setString(Session.Field.roomId, room.id);
+            session.setString(Session.Field.questionsSetId, room.questionsSetId);
 
             getActivity().runOnUiThread(() -> {
                 ((BottomNavigationView)getActivity().findViewById(R.id.nav_view)).setVisibility(View.GONE);

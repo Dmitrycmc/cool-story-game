@@ -11,7 +11,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.coolstorygame.databinding.FragmentQuestionsBinding;
-import com.example.coolstorygame.schema.response.Room;
 import com.example.coolstorygame.utils.Session;
 
 public class QuestionsFragment extends Fragment {
@@ -36,13 +35,20 @@ public class QuestionsFragment extends Fragment {
         return root;
     }
 
-    public void update(Room room) {
-        binding.textQuestions.setText(room.currentQuestionNumber + " " + room.currentPlayerNumber);
+    public void update() {
+        binding.textQuestions.setText(
+            session.getQuestions().questions.get(session.getInt(Session.Field.currentQuestionNumber)) +
+            " (" +
+            session.getInt(Session.Field.currentPlayerNumber).toString() +
+            ")"
+        );
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        update();
     }
 
     @Override
