@@ -1,0 +1,4 @@
+### Get questions
+
+POST http://localhost:3050/api/v1/questions/61fe06825360573ef8d33a76
+
