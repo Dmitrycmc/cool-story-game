@@ -9,7 +9,7 @@ public class Room extends ToJson {
     public String id;
     public Status status;
     public String token;
-    public List<String> playerIds;
+    public List<Player> players;
     public int currentPlayerNumber;
     public int questionsNumber;
     public String questionsSetId;
@@ -27,7 +27,7 @@ public class Room extends ToJson {
                 "id='" + id + '\'' +
                 ", status=" + status +
                 ", token='" + token + '\'' +
-                ", playerIds=" + playerIds +
+                ", players=" + players +
                 ", currentPlayerNumber=" + currentPlayerNumber +
                 ", questionsNumber=" + questionsNumber +
                 ", questionsSetId='" + questionsSetId + '\'' +

@@ -20,7 +20,7 @@ export const createRoom = async (): Promise<Room> => {
     const roomId = await roomDto.insertOne({
         status: Status.REGISTRATION,
         token,
-        playerIds: [],
+        players: [],
         questionsNumber: questionsSet.questions.length,
         questionsSetId: questionsSet.id!,
     });
@@ -67,7 +67,7 @@ export const register = async ({
         answerSet: [],
     });
 
-    await roomDto.updateById(roomId, { $push: { playerIds: createdPlayerId } });
+    await roomDto.updateById(roomId, { $push: { players: { id: createdPlayerId, name } } });
 
     const createdPlayer = await playerDto.findOneById(createdPlayerId);
 
@@ -106,7 +106,7 @@ export const getStatus = async ({
         if (!playerId || !token) {
             throw new Forbidden("Access denied: required playerId and token");
         }
-        if (!room.playerIds.includes(playerId)) {
+        if (!room.players.some((p) => p.id === playerId)) {
             throw new Forbidden("Access denied: invalid playerId / token");
         }
         const player = await playerDto.findOneById(playerId);
@@ -137,9 +137,9 @@ export const start = async ({
     if (room.status !== Status.REGISTRATION) {
         throw new BadRequest("Invalid room: bad status");
     }
-    if (room.playerIds.length < 2) {
+    if (room.players.length < 2) {
         throw new BadRequest(
-            `Not allowed: need to wait for at least ${2 - room.playerIds.length} more player(s)`
+            `Not allowed: need to wait for at least ${2 - room.players.length} more player(s)`
         );
     }
 
@@ -177,7 +177,7 @@ export const giveAnswer = async ({
     if (!playerId || !token) {
         throw new Forbidden("Access denied: required playerId and token");
     }
-    if (!room.playerIds.includes(playerId)) {
+    if (!room.players.some((p) => p.id === playerId)) {
         throw new Forbidden("Access denied: invalid playerId / token");
     }
     const player = await playerDto.findOneById(playerId);
@@ -187,7 +187,7 @@ export const giveAnswer = async ({
     if (!answer?.length) {
         throw new BadRequest("Invalid answer");
     }
-    if (playerId !== room.playerIds[room.currentPlayerNumber!]) {
+    if (playerId !== room.players[room.currentPlayerNumber!].id) {
         throw new Forbidden("Access denied: Not your turn");
     }
 
@@ -195,7 +195,7 @@ export const giveAnswer = async ({
 
     const nextTurn = room.turn! + 1;
 
-    if (nextTurn === room.questionsNumber * room.playerIds.length) {
+    if (nextTurn === room.questionsNumber * room.players.length) {
         await roomDto.updateById(roomId, {
             $set: {
                 status: Status.FINISHED,
@@ -210,8 +210,8 @@ export const giveAnswer = async ({
         await roomDto.updateById(roomId, {
             $set: {
                 turn: nextTurn,
-                currentPlayerNumber: nextTurn % room.playerIds.length,
-                currentQuestionNumber: Math.floor(nextTurn / room.playerIds.length),
+                currentPlayerNumber: nextTurn % room.players.length,
+                currentQuestionNumber: Math.floor(nextTurn / room.players.length),
             },
         });
     }
@@ -242,25 +242,25 @@ export const getStory = async ({
     if (!playerId || !token) {
         throw new Forbidden("Access denied: required playerId and token");
     }
-    if (!room.playerIds.includes(playerId)) {
+    if (!room.players.some((p) => p.id === playerId)) {
         throw new Forbidden("Access denied: invalid playerId / token");
     }
     const player = await playerDto.findOneById(playerId);
     if (player?.token !== token) {
         throw new Forbidden("Access denied: invalid playerId / token");
     }
-    if (playerId !== room.playerIds[room.currentPlayerNumber!]) {
+    if (playerId !== room.players[room.currentPlayerNumber!].id) {
         throw new Forbidden("Access denied: Not your turn");
     }
 
-    const players = await playerDto.findById(room.playerIds);
+    const players = await playerDto.findById(room.players.map((p) => p.id!));
 
     const result = [...new Array(room.questionsNumber)].map((_, idx) => {
         const i = room.currentPlayerNumber! + 1 + idx;
-        return players[i % room.playerIds.length]?.answerSet[idx];
+        return players[i % room.players.length]?.answerSet[idx];
     });
 
-    if (room.currentPlayerNumber === room.playerIds.length - 1) {
+    if (room.currentPlayerNumber === room.players.length - 1) {
         await roomDto.updateById(roomId, {
             $set: {
                 status: Status.ARCHIVED,

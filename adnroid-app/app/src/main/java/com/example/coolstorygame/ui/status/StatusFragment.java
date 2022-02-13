@@ -88,7 +88,7 @@ public class StatusFragment extends Fragment {
             roomStatus.add("Статус: " + room.status);
             roomStatus.add("Игроки:");
 
-            room.playerIds.forEach(roomStatus::add);
+            room.players.forEach(player -> roomStatus.add(player.name));
             ((TextView) getActivity().findViewById(R.id.playerList)).setText(roomStatus.toString());
 
             if (room.status == Status.GAME && session.getString(Session.Field.status).equals(Status.REGISTRATION.toString())) {

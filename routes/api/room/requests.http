@@ -4,7 +4,7 @@ POST http://localhost:3050/api/v1/room/new
 
 ### Register
 
-POST http://localhost:3050/api/v1/room/61fe25651cee5f2f1b2fd33a/register
+POST http://localhost:3050/api/v1/room/62095e716c81efa22455666a/register
 Content-Type: application/json
 
 {
@@ -13,21 +13,20 @@ Content-Type: application/json
 
 ### Start game
 
-POST http://localhost:3050/api/v1/room/61fe25651cee5f2f1b2fd33a/start
+POST http://localhost:3050/api/v1/room/62095e716c81efa22455666a/start
 Content-Type: application/json
 
 {
-  "token": "iJ9rd9"
+  "token": "R5UERm"
 }
 
 ### Room status
 
-POST http://localhost:3050/api/v1/room/61fe25651cee5f2f1b2fd33a/status
+POST http://localhost:3050/api/v1/room/62095e716c81efa22455666a/status
 Content-Type: application/json
 
 {
-  "playerId": "61fe25a71cee5f2f1b2fd33c",
-  "token": "ME9wPw"
+  "playerId": "61fe25a71cee5f2f1b2fd33c"
 }
 
 ### Answer
