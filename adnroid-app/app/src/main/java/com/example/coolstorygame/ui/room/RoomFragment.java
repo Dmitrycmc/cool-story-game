@@ -70,14 +70,11 @@ public class RoomFragment extends Fragment {
         if (code == 200) {
             Room room = Room.fromJson(body);
 
-            if (room.token != null) {
-                session.setString(Session.Field.roomToken, room.token);
-            }
-            session.setString(Session.Field.roomId, room.id);
-            session.setString(Session.Field.questionsSetId, room.questionsSetId);
+            session.setRoom(room);
+            session.setString(Session.Field.roomToken, room.token);
 
             getActivity().runOnUiThread(() -> {
-                ((BottomNavigationView)getActivity().findViewById(R.id.nav_view)).setVisibility(View.GONE);
+                getActivity().findViewById(R.id.nav_view).setVisibility(View.GONE);
                 session.setString(Session.Field.status, Status.REGISTRATION.toString());
                 NavHostFragment.findNavController(this).navigate(R.id.action_navigation_room_to_navigation_game);
             });

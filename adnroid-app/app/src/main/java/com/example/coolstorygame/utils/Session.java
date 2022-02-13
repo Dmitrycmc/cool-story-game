@@ -5,20 +5,18 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import com.example.coolstorygame.schema.response.Questions;
+import com.example.coolstorygame.schema.response.Room;
 
 public class Session {
     private final SharedPreferences prefs;
 
     public enum Field {
-        roomId,
-        roomToken,
         playerId,
         playerToken,
-        status,
-        questionsSetId,
+        room,
+        roomToken,
         questions,
-        currentPlayerNumber,
-        currentQuestionNumber
+        status
     }
 
     public Session(Context cntx) {
@@ -41,20 +39,20 @@ public class Session {
         prefs.edit().putString(key.toString(), value).commit();
     }
 
-    public Integer getInt(Field key) {
-        return prefs.getInt(key.toString(), 0);
+    public Room getRoom() {
+        return Room.fromJson(prefs.getString(Field.room.toString(), ""));
     }
 
-    public void setInt(Field key, Integer value) {
+    public void setRoom(Room room) {
         StringBuilder sb = new StringBuilder();
 
         sb.append(" ").append("\n")
                 .append("==== Storage ====").append("\n")
-                .append("Key: ").append(key).append("\n")
-                .append("Value: ").append(value);
+                .append("Key: ").append(Field.room).append("\n")
+                .append("Value: ").append(room);
 
         System.out.println(sb);
-        prefs.edit().putInt(key.toString(), value).commit();
+        prefs.edit().putString(Field.room.toString(), room.toJson()).commit();
     }
 
     public void setQuestions(Questions questions) {

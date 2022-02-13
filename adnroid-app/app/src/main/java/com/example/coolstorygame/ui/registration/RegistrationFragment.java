@@ -50,12 +50,12 @@ public class RegistrationFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        String roomId = session.getString(Session.Field.roomId);
+        String roomId = session.getRoom().id;
 
         binding.editTextRoomId.setText(roomId);
 
         ClipboardManager clipboard = getSystemService(getContext(), ClipboardManager.class);
-        ClipData clip = ClipData.newPlainText("23", session.getString(Session.Field.roomId));
+        ClipData clip = ClipData.newPlainText("", roomId);
         clipboard.setPrimaryClip(clip);
 
         //todo: show notification code in clipboard
@@ -73,7 +73,7 @@ public class RegistrationFragment extends Fragment {
     }
 
     private void loadQuestions() {
-        String questionsSetId = session.getString(Session.Field.questionsSetId);
+        String questionsSetId = session.getRoom().questionsSetId;
 
         Provider.questions(questionsSetId, this::onQuestionsLoaded);
     }
@@ -94,7 +94,7 @@ public class RegistrationFragment extends Fragment {
     }
 
     private void handleRegister(View v) {
-        String roomId = session.getString(Session.Field.roomId);
+        String roomId = session.getRoom().id;
         String name = binding.editTextPlayerName.getText().toString();
         String body = new RequestRegister(name).toJson();
 

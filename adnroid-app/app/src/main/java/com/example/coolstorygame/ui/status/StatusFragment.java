@@ -56,7 +56,7 @@ public class StatusFragment extends Fragment {
     private void statusPolling() {
         String body = new RequestStatus(session.getString(Session.Field.playerId), session.getString(Session.Field.playerToken)).toJson();
 
-        Provider.room(session.getString(Session.Field.roomId) + "/status", body, this::onResponse);
+        Provider.room(session.getRoom().id + "/status", body, this::onResponse);
     }
 
     private void onResponse(Integer code, String body) {
@@ -77,9 +77,9 @@ public class StatusFragment extends Fragment {
     public void updateStatus(String body) {
         Room room = Room.fromJson(body);
 
+        session.setRoom(room);
+
         if (QuestionsFragment.instance != null) {
-            session.setInt(Session.Field.currentPlayerNumber, room.currentPlayerNumber);
-            session.setInt(Session.Field.currentQuestionNumber, room.currentQuestionNumber);
             QuestionsFragment.instance.update();
         }
 

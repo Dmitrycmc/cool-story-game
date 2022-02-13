@@ -51,7 +51,7 @@ public class WaitingFragment extends Fragment {
     private void handleStart(View v) {
         String body = new RequestStart(session.getString(Session.Field.roomToken)).toJson();
 
-        Provider.room(session.getString(Session.Field.roomId) + "/start", body, this::onStart);
+        Provider.room(session.getRoom().id + "/start", body, this::onStart);
     }
 
     public void onStart(Integer code, String body) {
