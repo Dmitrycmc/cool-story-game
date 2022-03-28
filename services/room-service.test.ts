@@ -1,7 +1,7 @@
 import * as roomService from "./room-service";
 import { Room } from "../types/room";
 import { Player } from "../types/player";
-import { questionsSetDto } from "../dto/questions-set";
+import { questionsSetDao } from "../dao/questions-set";
 import { BadRequest } from "../types/errors/bad-request";
 
 interface Credentials {

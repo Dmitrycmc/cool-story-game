@@ -1,23 +1,23 @@
-import { roomDto } from "../dto/room";
+import { roomDao } from "../dao/room";
 import { Status } from "../types/status";
-import { playerDto } from "../dto/player";
+import { playerDao } from "../dao/player";
 import { BadRequest } from "../types/errors/bad-request";
 
 import { generate } from "rand-token";
 import { Room } from "../types/room";
 import { Player } from "../types/player";
 import { Forbidden } from "../types/errors/forbidden";
-import { questionsSetDto } from "../dto/questions-set";
+import { questionsSetDao } from "../dao/questions-set";
 
 export const createRoom = async (): Promise<Room> => {
     const token = generate(6);
 
-    const questionsSet = await questionsSetDto.findOneById("61fe06825360573ef8d33a76");
+    const questionsSet = await questionsSetDao.findOneById("61fe06825360573ef8d33a76");
     if (questionsSet === null) {
         throw new Error("Server error: questions set not fount");
     }
 
-    const roomId = await roomDto.insertOne({
+    const roomId = await roomDao.insertOne({
         status: Status.REGISTRATION,
         token,
         players: [],
@@ -25,7 +25,7 @@ export const createRoom = async (): Promise<Room> => {
         questionsSetId: questionsSet.id!,
     });
 
-    const createdRoom = await roomDto.findOneById(roomId);
+    const createdRoom = await roomDao.findOneById(roomId);
 
     if (createdRoom === null) {
         throw new Error("Server error: room was not created");
@@ -41,8 +41,8 @@ export const register = async ({
     roomId: string;
     name?: string;
 }): Promise<Player> => {
-    const room = await roomDto.findOneById(roomId);
-    const player = await playerDto.findOne({
+    const room = await roomDao.findOneById(roomId);
+    const player = await playerDao.findOne({
         name,
         roomId: roomId,
     });
@@ -60,16 +60,16 @@ export const register = async ({
         throw new BadRequest(`Invalid name: ${name} already registered`);
     }
 
-    const createdPlayerId = await playerDto.insertOne({
+    const createdPlayerId = await playerDao.insertOne({
         name: name!,
         token: generate(6),
         roomId: roomId,
         answerSet: [],
     });
 
-    await roomDto.updateById(roomId, { $push: { players: { id: createdPlayerId, name } } });
+    await roomDao.updateById(roomId, { $push: { players: { id: createdPlayerId, name } } });
 
-    const createdPlayer = await playerDto.findOneById(createdPlayerId);
+    const createdPlayer = await playerDao.findOneById(createdPlayerId);
 
     if (createdPlayer === null) {
         throw new Error("Server error: player was not created");
@@ -89,7 +89,7 @@ export const getStatus = async ({
     token?: string;
     roomToken?: string;
 }): Promise<Partial<Room>> => {
-    const room = await roomDto.findOneById(roomId);
+    const room = await roomDao.findOneById(roomId);
 
     if (room === null) {
         throw new BadRequest("Invalid room: not found");
@@ -109,7 +109,7 @@ export const getStatus = async ({
         if (!room.players.some((p) => p.id === playerId)) {
             throw new Forbidden("Access denied: invalid playerId / token");
         }
-        const player = await playerDto.findOneById(playerId);
+        const player = await playerDao.findOneById(playerId);
         if (player?.token !== token) {
             throw new Forbidden("Access denied: invalid playerId / token");
         }
@@ -126,7 +126,7 @@ export const start = async ({
     roomId: string;
     token?: string;
 }): Promise<Partial<Room>> => {
-    const room = await roomDto.findOneById(roomId);
+    const room = await roomDao.findOneById(roomId);
 
     if (room === null) {
         throw new BadRequest("Invalid room: not found");
@@ -143,7 +143,7 @@ export const start = async ({
         );
     }
 
-    await roomDto.updateById(roomId, {
+    await roomDao.updateById(roomId, {
         $set: {
             status: Status.GAME,
             turn: 0,
@@ -166,7 +166,7 @@ export const giveAnswer = async ({
     token?: string;
     answer?: string;
 }): Promise<Partial<Room>> => {
-    const room = await roomDto.findOneById(roomId);
+    const room = await roomDao.findOneById(roomId);
 
     if (room === null) {
         throw new BadRequest("Invalid room: not found");
@@ -180,7 +180,7 @@ export const giveAnswer = async ({
     if (!room.players.some((p) => p.id === playerId)) {
         throw new Forbidden("Access denied: invalid playerId / token");
     }
-    const player = await playerDto.findOneById(playerId);
+    const player = await playerDao.findOneById(playerId);
     if (player?.token !== token) {
         throw new Forbidden("Access denied: invalid playerId / token");
     }
@@ -191,12 +191,12 @@ export const giveAnswer = async ({
         throw new Forbidden("Access denied: Not your turn");
     }
 
-    await playerDto.updateById(playerId, { $push: { answerSet: answer } });
+    await playerDao.updateById(playerId, { $push: { answerSet: answer } });
 
     const nextTurn = room.turn! + 1;
 
     if (nextTurn === room.questionsNumber * room.players.length) {
-        await roomDto.updateById(roomId, {
+        await roomDao.updateById(roomId, {
             $set: {
                 status: Status.FINISHED,
                 currentPlayerNumber: 0,
@@ -207,7 +207,7 @@ export const giveAnswer = async ({
             },
         });
     } else {
-        await roomDto.updateById(roomId, {
+        await roomDao.updateById(roomId, {
             $set: {
                 turn: nextTurn,
                 currentPlayerNumber: nextTurn % room.players.length,
@@ -216,7 +216,7 @@ export const giveAnswer = async ({
         });
     }
 
-    const updatedRoom = (await roomDto.findOneById(roomId)) as Room;
+    const updatedRoom = (await roomDao.findOneById(roomId)) as Room;
 
     const { token: _roomToken, ...roomStatus } = updatedRoom;
     return roomStatus;
@@ -231,7 +231,7 @@ export const getStory = async ({
     playerId?: string;
     token?: string;
 }): Promise<string[]> => {
-    const room = await roomDto.findOneById(roomId);
+    const room = await roomDao.findOneById(roomId);
 
     if (room === null) {
         throw new BadRequest("Invalid room: not found");
@@ -245,7 +245,7 @@ export const getStory = async ({
     if (!room.players.some((p) => p.id === playerId)) {
         throw new Forbidden("Access denied: invalid playerId / token");
     }
-    const player = await playerDto.findOneById(playerId);
+    const player = await playerDao.findOneById(playerId);
     if (player?.token !== token) {
         throw new Forbidden("Access denied: invalid playerId / token");
     }
@@ -253,7 +253,7 @@ export const getStory = async ({
         throw new Forbidden("Access denied: Not your turn");
     }
 
-    const players = await playerDto.findById(room.players.map((p) => p.id!));
+    const players = await playerDao.findById(room.players.map((p) => p.id!));
 
     const result = [...new Array(room.questionsNumber)].map((_, idx) => {
         const i = room.currentPlayerNumber! + 1 + idx;
@@ -261,7 +261,7 @@ export const getStory = async ({
     });
 
     if (room.currentPlayerNumber === room.players.length - 1) {
-        await roomDto.updateById(roomId, {
+        await roomDao.updateById(roomId, {
             $set: {
                 status: Status.ARCHIVED,
             },
@@ -271,7 +271,7 @@ export const getStory = async ({
             },
         });
     } else {
-        await roomDto.updateById(roomId, {
+        await roomDao.updateById(roomId, {
             $inc: {
                 currentPlayerNumber: 1,
             },
