@@ -3,7 +3,7 @@ import path from "path";
 import cookieParser from "cookie-parser";
 import logger from "morgan";
 
-import apiRouter from "./routes/api/api-router";
+import apiRouter from "./controllers/api-router";
 import { CustomError } from "./types/errors/custom-error";
 import { ServerError } from "./types/errors/server-error";
 
@@ -32,7 +32,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/api/v1", apiRouter);
 app.get("/ping", (req: Request, res: Response) => {
-    res.send("ping");
+    res.send("pong");
 });
 app.use(handleError);
 

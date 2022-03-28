@@ -1,5 +1,5 @@
 import express from "express";
-import * as roomService from "../../../services/room-service";
+import * as roomService from "../../services/room-service";
 
 const router = express.Router();
 
