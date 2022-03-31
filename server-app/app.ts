@@ -28,14 +28,11 @@ app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "..", "web-app", "build")));
 
 app.use("/api/v1", apiRouter);
 app.get("/ping", (req: Request, res: Response) => {
     res.send("pong");
-});
-app.get("/version", (req: Request, res: Response) => {
-    res.send(require('./package.json').version);
 });
 app.use(handleError);
 

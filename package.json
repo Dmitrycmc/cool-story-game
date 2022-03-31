@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "description": "General module",
   "scripts": {
-    "start": "npm run start --prefix=server-app",
-    "dev:server": "npm run dev --prefix=server-app",
+    "start": "npm run build --prefix=web-app && npm run start --prefix=server-app",
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:server": "npm run dev --prefix=server-app",
+    "dev:client": "npm run dev --prefix=web-app",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -17,5 +18,8 @@
   "bugs": {
     "url": "https://github.com/Dmitrycmc/cool-story-game/issues"
   },
-  "homepage": "https://github.com/Dmitrycmc/cool-story-game#readme"
+  "homepage": "https://github.com/Dmitrycmc/cool-story-game#readme",
+  "devDependencies": {
+    "concurrently": "^7.0.0"
+  }
 }
