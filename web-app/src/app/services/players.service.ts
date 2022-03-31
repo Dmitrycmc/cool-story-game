@@ -10,7 +10,7 @@ export class PlayersService {
   constructor() { }
 
   public openWebSocket(roomId: string, toggleButtonEvent?: Observable<any>): Observable<any> {
-    const ws = webSocket(`ws://${window.location.host}/api/web-socket`);
+    const ws = webSocket(`wss://${window.location.host}/api/web-socket`);
     toggleButtonEvent?.subscribe((msg: any) => {
       ws.next({
         ...msg,
