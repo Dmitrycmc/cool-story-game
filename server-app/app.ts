@@ -34,6 +34,9 @@ app.use("/api/v1", apiRouter);
 app.get("/ping", (req: Request, res: Response) => {
     res.send("pong");
 });
+app.get("/version", (req: Request, res: Response) => {
+    res.send(require('./package.json').version);
+});
 app.use(handleError);
 
 module.exports = app;
