@@ -2,6 +2,7 @@ if [[ `git status --porcelain` ]]; then
   echo "You have uncommited changes"
 else
   GREEN='\033[0;32m'
+  NC='\033[0m'
 
   npm run build --prefix=web-app && \
   npm version patch && \
