@@ -1,12 +1,16 @@
 import express from "express";
 import * as roomService from "../../services/room-service";
+import { HOUR } from "../../utils/time";
+import { broadcast } from "../../websocket";
 
 const router = express.Router();
 
 router.post("/new", async (req, res, next) => {
     roomService
         .createRoom()
-        .then((data) => res.json(data))
+        .then(({ token, ...room }) => {
+            res.cookie(`room:${room.id}`, token, { maxAge: HOUR }).json(room);
+        })
         .catch(next);
 });
 
@@ -16,7 +20,10 @@ router.post("/:roomId/register", async (req, res, next) => {
 
     roomService
         .register({ roomId, name })
-        .then((data) => res.json(data))
+        .then(({ token, ...player }) => {
+            res.cookie(`player:${roomId}`, token, { maxAge: HOUR }).json(player);
+            broadcast(roomId, { type: 'NEW_PLAYER', name });
+        })
         .catch(next);
 });
 

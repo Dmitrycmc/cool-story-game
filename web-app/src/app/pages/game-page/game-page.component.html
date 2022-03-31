@@ -1,0 +1,15 @@
+<div class="line" *ngIf="!registered">
+  <mat-form-field appearance="fill">
+    <mat-label>Enter your name</mat-label>
+    <input [(ngModel)]="name" matInput [disabled]="pending">
+  </mat-form-field>
+  <button
+    [disabled]="(!name || name.length == 0) || pending"
+    (click)="onSubmit()"
+    mat-flat-button
+    color="primary"
+  >
+    Send
+  </button>
+</div>
+<app-players [players]="room?.players" ></app-players>

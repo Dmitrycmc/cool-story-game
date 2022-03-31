@@ -1,39 +1,49 @@
-import * as http from "http";
+import * as WebSocket from "ws";
+import * as http from 'http';
+import { IncomingMessage } from "http";
 
-import { Server } from "socket.io";
+const roomIdToSessionsList: Record<
+    string,
+    {
+        ws: WebSocket;
+        req: IncomingMessage;
+    }[]
+> = {};
 
 export const wrapWebsocket = (server: http.Server) => {
-    const io = new Server(server, { path: 'ws' });
+    const wss = new WebSocket.Server({ server });
 
-    io.on("connection", (socket) => {
-        //connection is up, let's add a simple simple event
-        socket.on("message", (message: string) => {
-            //log the received message and send it back to the client
-            console.log("[received] %s", message);
-            const answer = `Hello, you sent: ${message}`;
-            socket.send(answer);
-            console.log("[sent] %s", answer);
+    wss.on('connection', (ws: WebSocket, req: IncomingMessage) => {
+        ws.on('message', (str: string) => {
+            const msg = JSON.parse(str);
+
+            switch (msg.type) {
+                case 'JOIN':
+                    if (!roomIdToSessionsList[msg.roomId]) {
+                        roomIdToSessionsList[msg.roomId] = [];
+                    }
+
+                    if (!roomIdToSessionsList[msg.roomId].some((r) => r.ws === ws)) {
+                        roomIdToSessionsList[msg.roomId].push({ ws, req });
+                    }
+                    break;
+            }
         });
 
-        //send immediatly a feedback to the incoming connection
-        console.log("[opened] Connection opened");
-        socket.send("Hi there, I am a WebSocket server");
-
-        let i = 0;
-        let timeoutId: NodeJS.Timeout | undefined;
-
-        function schedule() {
-            timeoutId = setTimeout(() => {
-                socket.send(i);
-                console.log("[sent] %s", i++);
-                schedule();
-            }, Math.floor(Math.random() * 5000) + 5000);
-        }
-        schedule();
-
-        socket.on("disconnect", () => {
-            console.log("[closed]");
-            clearTimeout(timeoutId!);
+        ws.on('close', () => {
+            Object.values(roomIdToSessionsList).forEach((wsList) => {
+                const i = wsList.findIndex((r) => r.ws === ws);
+                if (i != -1) {
+                    wsList.splice(i, 1);
+                }
+            });
         });
+    });
+};
+
+export const broadcast = (roomId: string, msg: any): void => {
+    const list = roomIdToSessionsList[roomId];
+    list.forEach((r) => {
+        r.ws.send(JSON.stringify(msg));
     });
 };
