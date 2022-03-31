@@ -1,7 +1,7 @@
 <div class="line" *ngIf="!registered">
   <mat-form-field appearance="fill">
     <mat-label>Enter your name</mat-label>
-    <input [(ngModel)]="name" matInput [disabled]="pending">
+    <input [(ngModel)]="name" matInput [disabled]="pending" (keydown.enter)="onSubmit()">
   </mat-form-field>
   <button
     [disabled]="(!name || name.length == 0) || pending"

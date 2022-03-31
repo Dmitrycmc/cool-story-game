@@ -1,1 +1,1 @@
-<div *ngFor="let player of players">{{player.name}}</div>
+<div *ngFor="let player of players; let i = index">{{i + 1}}. {{player.name}}</div>
