@@ -1,9 +1,10 @@
-if [[ `git status --porcelain` ]]; then
-  echo "You have uncommited changes"
-else
-  GREEN='\033[0;32m'
-  NC='\033[0m'
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+NC='\033[0m'
 
+if [[ `git status --porcelain` ]]; then
+  echo "Есть ${RED}несохраненные${NC} изменения"
+else
   npm run build --prefix=web-app && \
   npm version patch && \
 

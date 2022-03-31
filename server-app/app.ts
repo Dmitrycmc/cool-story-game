@@ -28,12 +28,12 @@ app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, "..", "web-app", "build")));
 
 app.use("/api/v1", apiRouter);
-app.get("/ping", (req: Request, res: Response) => {
-    res.send("pong");
-});
+
+app.use(express.static(path.join(__dirname, "..", "web-app", "build")));
+app.use((req, res) => res.sendFile(path.join(__dirname, '..', 'web-app', 'build', 'index.html')));
+
 app.use(handleError);
 
 module.exports = app;
