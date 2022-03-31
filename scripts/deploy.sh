@@ -12,5 +12,6 @@ else
   git commit -m build && \
   git push -f && \
 
-  git checkout master
+  git checkout master && \
+  echo Новая версия спешит на https://cool-story-game.herokuapp.com/
 fi
