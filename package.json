@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "description": "General module",
   "scripts": {
-    "start": "npm run build --prefix=web-app && npm run start --prefix=server-app",
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "deploy": "sh ./scripts/deploy.sh",
+    "start": "npm run start --prefix=server-app",
     "dev:server": "npm run dev --prefix=server-app",
     "dev:client": "npm run dev --prefix=web-app",
     "test": "echo \"Error: no test specified\" && exit 1"

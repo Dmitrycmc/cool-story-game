@@ -1,7 +1,5 @@
 {
-  "name": "cool-story-game",
-  "version": "0.0.1",
-  "private": true,
+  "name": "cool-story-game.server-app",
   "scripts": {
     "start": "npm ci && ts-node ./bin/www",
     "dev": "npm i && nodemon --config .nodemonrc.json",
