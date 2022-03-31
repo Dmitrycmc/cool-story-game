@@ -1,6 +1,8 @@
 if [[ `git status --porcelain` ]]; then
   echo "You have uncommited changes"
 else
+  GREEN='\033[0;32m'
+
   npm run build --prefix=web-app && \
   npm version patch && \
 
@@ -13,5 +15,5 @@ else
   git push -f && \
 
   git checkout master && \
-  echo Новая версия спешит на https://cool-story-game.herokuapp.com/
+  echo ${GREEN}Новая версия${NC} спешит на https://cool-story-game.herokuapp.com/
 fi
