@@ -12,7 +12,19 @@ import { questionsSetDao } from "../dao/questions-set";
 export const createRoom = async (): Promise<Room> => {
     const token = generate(6);
 
-    const questionsSet = await questionsSetDao.findOneById("61fe06825360573ef8d33a76");
+    const questionsSet = {
+        id: '12',
+        questions: [
+            'Кто',
+            'С кем',
+            'Где',
+            'Что делали',
+            'Кто увидел',
+            'Что сказал',
+            'Что ответили',
+        ],
+    };
+
     if (questionsSet === null) {
         throw new Error("Server error: questions set not fount");
     }
