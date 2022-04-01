@@ -249,14 +249,16 @@ export const getStory = async ({
     if (player?.token !== token) {
         throw new Forbidden("Access denied: invalid playerId / token");
     }
-    if (room.players.findIndex((p) => p.id === playerId) > room.currentPlayerNumber!) {
+
+    const playerIndex = room.players.findIndex((p) => p.id === playerId);
+    if (playerIndex > room.currentPlayerNumber!) {
         throw new Forbidden("Access denied: Not your turn");
     }
 
     const players = await playerDao.findById(room.players.map((p) => p.id!));
 
     const result = [...new Array(room.questionsNumber)].map((_, idx) => {
-        const i = room.currentPlayerNumber! + 1 + idx;
+        const i = playerIndex! + 1 + idx;
         return players[i % room.players.length]?.answerSet[idx];
     });
 

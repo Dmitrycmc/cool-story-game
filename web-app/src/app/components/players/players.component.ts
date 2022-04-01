@@ -30,7 +30,7 @@ export class PlayersComponent implements OnInit {
     ...this.displayedColumns.reduce((acc, col, j) =>
       ({
         ...acc,
-        [col]: this.room!.turn! - ((j - 1) * this.room!.questionsNumber! + i)
+        [col]: this.room!.turn! - ((j - 1) * this.room!.players.length! + i)
       }), {}),
     [this.displayedColumns[0]]: p.name
   });
