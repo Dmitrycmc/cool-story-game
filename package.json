@@ -1,6 +1,6 @@
 {
   "name": "cool-story-game",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "General module",
   "scripts": {
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
