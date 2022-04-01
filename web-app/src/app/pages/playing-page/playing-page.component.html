@@ -1,0 +1,15 @@
+<div class="line">
+  <mat-form-field class="field-answer" appearance="fill">
+    <mat-label>Enter your name</mat-label>
+    <input [(ngModel)]="answer" matInput [disabled]="pending" (keydown.enter)="onSubmit()">
+  </mat-form-field>
+  <button
+    [disabled]="answer.length == 0 || pending"
+    (click)="onSubmit()"
+    mat-flat-button
+    color="primary"
+  >
+    Send
+  </button>
+</div>
+

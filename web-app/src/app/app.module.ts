@@ -15,6 +15,8 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { PlayersComponent } from './components/players/players.component';
 import { MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarModule } from "@angular/material/snack-bar";
 import { MatTableModule } from "@angular/material/table";
+import { RegistrationPageComponent } from './pages/registration-page/registration-page.component';
+import { PlayingPageComponent } from './pages/playing-page/playing-page.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +24,9 @@ import { MatTableModule } from "@angular/material/table";
     NewGamePageComponent,
     MainPageComponent,
     GamePageComponent,
-    PlayersComponent
+    PlayersComponent,
+    RegistrationPageComponent,
+    PlayingPageComponent
   ],
   imports: [
     BrowserModule,

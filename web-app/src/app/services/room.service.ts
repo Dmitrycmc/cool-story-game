@@ -22,4 +22,12 @@ export class RoomService {
   public register(roomId: string, name: string): Observable<Player> {
     return this.http.post<Player>(`/api/v1/room/${roomId}/register`, {name});
   }
+
+  public start(roomId: string): Observable<Room> {
+    return this.http.post<Room>(`/api/v1/room/${roomId}/start`, null);
+  }
+
+  public answer(roomId: string, answer: string): Observable<Room> {
+    return this.http.post<Room>(`/api/v1/room/${roomId}/answer`, {answer});
+  }
 }

@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from "@angular/core";
 import { RoomService } from "../../services/room.service";
 import { ActivatedRoute } from "@angular/router";
 import { Room } from "../../../../../server-app/types/room";
-import { parseCookies } from "../../../../../server-app/utils/cookies";
-import { MatSnackBar } from "@angular/material/snack-bar";
+import { from } from "rxjs";
+import { PlayersService } from "../../services/players.service";
+import { Status } from "../../../../../server-app/types/status";
 
 @Component({
   selector: 'app-game-page',
@@ -11,16 +12,14 @@ import { MatSnackBar } from "@angular/material/snack-bar";
   styleUrls: ['./game-page.component.scss']
 })
 export class GamePageComponent implements OnInit {
-  name: string | null = localStorage.getItem('name');
-  room?: Room;
+  room?: Partial<Room>;
   roomId = this.activatedRoute.snapshot.params['roomId'];
   pending = false;
-  registered = Boolean(parseCookies(document.cookie)?.[`player:${this.roomId}`]);
 
   constructor(
     private roomService: RoomService,
     private activatedRoute: ActivatedRoute,
-    private _snackBar: MatSnackBar
+    private playersService: PlayersService
   ) { }
 
   ngOnInit(): void {
@@ -29,25 +28,26 @@ export class GamePageComponent implements OnInit {
       this.room = room;
       this.pending = false;
     });
-  }
 
-  onSubmit() {
-    if (!this.name?.length) {
-      return;
-    }
-    this.pending = true;
-    this.roomService.register(this.roomId, this.name).subscribe({
-      next: () => {
-        this.pending = false;
-        this.registered = true;
-        if (!localStorage.getItem('name')) {
-          localStorage.setItem('name', this.name!);
+    this.playersService.openWebSocket(this.roomId, from([{type: 'JOIN'}]))
+      .subscribe(msg => {
+        switch (msg.type) {
+          case 'NEW_PLAYER':
+            this.room = {
+              ...this.room,
+              players: [
+                ...this.room?.players || [],
+                msg.player
+              ]
+            };
+            return;
+          case 'START':
+            this.room = {
+              ...this.room,
+              status: Status.GAME
+            };
+            return;
         }
-      },
-      error: (error) => {
-        this.pending = false;
-        this._snackBar.open(error.error);
-      }
-    });
+      });
   }
 }

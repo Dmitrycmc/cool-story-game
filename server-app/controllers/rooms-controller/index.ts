@@ -9,7 +9,7 @@ router.post("/new", async (req, res, next) => {
     roomService
         .createRoom()
         .then(({ token, ...room }) => {
-            res.cookie(`room:${room.id}`, token, { maxAge: HOUR }).json(room);
+            res.cookie(`room-token:${room.id}`, token, { maxAge: HOUR }).json(room);
         })
         .catch(next);
 });
@@ -21,25 +21,32 @@ router.post("/:roomId/register", async (req, res, next) => {
     roomService
         .register({ roomId, name })
         .then(({ token, ...player }) => {
-            res.cookie(`player:${roomId}`, token, { maxAge: HOUR }).json(player);
-            broadcast(roomId, { type: 'NEW_PLAYER', name });
+            broadcast(roomId, { type: 'NEW_PLAYER', player });
+            res.cookie(`player-id:${roomId}`, player.id, { maxAge: HOUR })
+                .cookie(`player-token:${player.id}`, token, { maxAge: HOUR })
+                .json(player);
         })
         .catch(next);
 });
 
 router.post("/:roomId/start", async (req, res, next) => {
-    const token = req.body.token;
     const roomId = req.params.roomId;
+    const token = req.cookies[`room-token:${roomId}`] || req.body.token;
 
     roomService
         .start({ roomId, token })
-        .then((data) => res.json(data))
+        .then((data) => {
+            broadcast(roomId, { type: 'START' });
+            res.json(data);
+        })
         .catch(next);
 });
 
 router.post("/:roomId/status", async (req, res, next) => {
-    const { playerId, token } = req.body;
     const roomId = req.params.roomId;
+
+    const playerId = req.cookies[`player-id:${roomId}`] || req.body.playerId;
+    const token = req.cookies[`player-token:${playerId}`] || req.body.token;
 
     roomService
         .getStatus({ roomId, playerId, token })
@@ -48,18 +55,31 @@ router.post("/:roomId/status", async (req, res, next) => {
 });
 
 router.post("/:roomId/answer", async (req, res, next) => {
-    const { playerId, token, answer } = req.body;
+    const { answer } = req.body;
     const roomId = req.params.roomId;
+
+    const playerId = req.cookies[`player-id:${roomId}`] || req.body.playerId;
+    const token = req.cookies[`player-token:${playerId}`] || req.body.token;
 
     roomService
         .giveAnswer({ roomId, playerId, token, answer })
-        .then((data) => res.json(data))
+        .then((room) => {
+            broadcast(roomId, {
+                type: 'TURN',
+                turn: room.turn,
+                currentPlayerNumber: room.currentPlayerNumber,
+                currentQuestionNumber: room.currentQuestionNumber,
+            });
+            res.json(room);
+        })
         .catch(next);
 });
 
 router.post("/:roomId/story", async (req, res, next) => {
-    const { playerId, token } = req.body;
     const roomId = req.params.roomId;
+
+    const playerId = req.cookies[`player-id:${roomId}`] || req.body.playerId;
+    const token = req.cookies[`player-token:${playerId}`] || req.body.token;
 
     roomService
         .getStory({ roomId, playerId, token })

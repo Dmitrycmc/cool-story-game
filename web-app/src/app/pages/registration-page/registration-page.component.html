@@ -1,0 +1,26 @@
+<div class="line">
+  <mat-form-field class="field-name" appearance="fill">
+    <mat-label>Enter your name</mat-label>
+    <input [(ngModel)]="name" matInput [disabled]="pending || registered" (keydown.enter)="onSubmit()">
+  </mat-form-field>
+  <button
+    [disabled]="name.length == 0 || pending || registered"
+    (click)="onSubmit()"
+    mat-flat-button
+    color="primary"
+  >
+    Send
+  </button>
+</div>
+<div class="line">
+  <button
+    [disabled]="!registered || !isRoomAdmin"
+    class="start-button"
+    (click)="onStart()"
+    mat-flat-button
+    color="primary"
+  >
+    Start
+  </button>
+</div>
+

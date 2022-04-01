@@ -14,6 +14,8 @@ export class PlayersComponent implements OnInit {
 
   constructor(private playersService: PlayersService, private activatedRoute: ActivatedRoute) { }
 
+  ngOnInit() {}
+
   displayedColumns = ['Игрок', '1', '2', '3'];
 
   tableCell = this.displayedColumns.reduce((acc, col) => ({
@@ -30,14 +32,4 @@ export class PlayersComponent implements OnInit {
       this.dataSource = this.players.map(this.buildTableCell);
     }
   }
-
-  ngOnInit(): void {
-    const roomId = this.activatedRoute.snapshot.params['roomId'];
-
-    this.playersService.openWebSocket(roomId, from([{type: 'JOIN'}])).subscribe(name => {
-      this.players.push({name});
-      this.dataSource.push(this.buildTableCell({name}));
-    });
-  }
-
 }

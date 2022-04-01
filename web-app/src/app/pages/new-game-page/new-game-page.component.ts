@@ -8,12 +8,10 @@ import { Router } from "@angular/router";
   styleUrls: ['./new-game-page.component.scss']
 })
 export class NewGamePageComponent implements OnInit {
-
   constructor(private roomService: RoomService, private router: Router) { }
 
   ngOnInit(): void {
     this.roomService.createRoom().subscribe(room => {
-      console.log(room);
       this.router.navigate(['/room', room.id], {replaceUrl: true});
     });
   }

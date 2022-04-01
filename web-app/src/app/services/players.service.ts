@@ -13,23 +13,18 @@ export class PlayersService {
   constructor() { }
 
   public openWebSocket(roomId: string, toggleButtonEvent?: Observable<any>): Observable<any> {
+    const wsProtocol = `ws${production ? 's' : ''}`;
+
     const ws = webSocket(
-      `ws${production ? 's' : ''}://${window.location.host}/api/web-socket`
+      `${wsProtocol}://${window.location.host}/api/web-socket`
     );
+
     toggleButtonEvent?.subscribe((msg: any) => {
-      ws.next({
-        ...msg,
-        roomId
-      });
+      ws.next({ ...msg, roomId });
     });
 
     return new Observable<any>(subscriber => {
-      ws.subscribe((msg: any) => {
-        if (msg.type !== 'NEW_PLAYER') {
-          return;
-        }
-        return subscriber.next(msg.name)
-      });
+      ws.subscribe(msg => subscriber.next(msg));
     });
   }
 }
