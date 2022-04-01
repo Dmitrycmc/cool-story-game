@@ -8,6 +8,7 @@
     "start": "npm run start --prefix=server-app",
     "dev:server": "npm run dev --prefix=server-app",
     "dev:client": "npm run dev --prefix=web-app",
+    "update-statistics": "scripts/statistics.sh common",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -21,6 +22,7 @@
   },
   "homepage": "https://github.com/Dmitrycmc/cool-story-game#readme",
   "devDependencies": {
-    "concurrently": "^7.0.0"
+    "concurrently": "^7.0.0",
+    "cloc": "^2.9.0"
   }
 }
