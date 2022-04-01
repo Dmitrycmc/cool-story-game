@@ -1,10 +1,10 @@
 <div class="line">
   <mat-form-field class="field-answer" appearance="fill">
-    <mat-label>Enter your name</mat-label>
-    <input [(ngModel)]="answer" matInput [disabled]="pending" (keydown.enter)="onSubmit()">
+    <mat-label>{{questions?.[room!.currentQuestionNumber!] || ''}}</mat-label>
+    <input [(ngModel)]="answer" matInput [disabled]="pending || !isMyTurn" (keydown.enter)="onSubmit()">
   </mat-form-field>
   <button
-    [disabled]="answer.length == 0 || pending"
+    [disabled]="answer.length == 0 || pending || !isMyTurn"
     (click)="onSubmit()"
     mat-flat-button
     color="primary"

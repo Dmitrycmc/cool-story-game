@@ -3,20 +3,20 @@ import { RoomService } from "../../services/room.service";
 import { ActivatedRoute } from "@angular/router";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Room } from "../../../../../server-app/types/room";
+import { Status } from "../../../../../server-app/types/status";
 import { parseCookies } from "../../../../../server-app/utils/cookies";
 
 @Component({
-  selector: 'app-playing-page',
-  templateUrl: './playing-page.component.html',
-  styleUrls: ['./playing-page.component.scss']
+  selector: 'app-story-page',
+  templateUrl: './story-page.component.html',
+  styleUrls: ['./story-page.component.scss']
 })
-export class PlayingPageComponent implements OnInit {
+export class StoryPageComponent implements OnInit {
   @Input() room?: Room;
-  @Input() questions?: string[];
-  answer: string = '';
-  pending = false;
-  isMyTurn = false;
   roomId = this.activatedRoute.snapshot.params['roomId'];
+  pending = false;
+  myIndex?: number;
+  story: string = '';
 
   constructor(
     private roomService: RoomService,
@@ -27,23 +27,25 @@ export class PlayingPageComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(changes: SimpleChanges): void {
     if ('room' in changes) {
-      this.isMyTurn =
-        this.room!.players[this.room!.currentPlayerNumber!].id ===
-        parseCookies(document.cookie)[`player-id:${this.roomId}`];
+      this.myIndex = this.room?.players.findIndex(p => p.id === parseCookies(document.cookie)[`player-id:${this.roomId}`]);
+
+      if (this.room?.status === Status.FINISHED && this.room!.currentPlayerNumber! >= this.myIndex!) {
+        this.pending = true;
+        this.roomService.getStory(this.roomId).subscribe(answers => {
+          this.pending = false;
+          this.story = answers.join(' ');
+        });
+      }
     }
   }
 
-  onSubmit() {
-    if (!this.answer?.length) {
-      return;
-    }
+  pubStory() {
     this.pending = true;
-    this.roomService.answer(this.roomId, this.answer).subscribe({
+    this.roomService.publishStory(this.roomId).subscribe({
       next: () => {
         this.pending = false;
-        this.answer = '';
       },
       error: (error) => {
         this.pending = false;

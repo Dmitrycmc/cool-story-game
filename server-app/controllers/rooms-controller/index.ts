@@ -2,6 +2,7 @@ import express from "express";
 import * as roomService from "../../services/room-service";
 import { HOUR } from "../../utils/time";
 import { broadcast } from "../../websocket";
+import { Status } from "../../types/status";
 
 const router = express.Router();
 
@@ -21,7 +22,7 @@ router.post("/:roomId/register", async (req, res, next) => {
     roomService
         .register({ roomId, name })
         .then(({ token, ...player }) => {
-            broadcast(roomId, { type: 'NEW_PLAYER', player });
+            broadcast(roomId, { type: 'NEW_PLAYER', payload: player });
             res.cookie(`player-id:${roomId}`, player.id, { maxAge: HOUR })
                 .cookie(`player-token:${player.id}`, token, { maxAge: HOUR })
                 .json(player);
@@ -66,9 +67,7 @@ router.post("/:roomId/answer", async (req, res, next) => {
         .then((room) => {
             broadcast(roomId, {
                 type: 'TURN',
-                turn: room.turn,
-                currentPlayerNumber: room.currentPlayerNumber,
-                currentQuestionNumber: room.currentQuestionNumber,
+                payload: room,
             });
             res.json(room);
         })
@@ -84,6 +83,24 @@ router.post("/:roomId/story", async (req, res, next) => {
     roomService
         .getStory({ roomId, playerId, token })
         .then((data) => res.json(data))
+        .catch(next);
+});
+
+router.post("/:roomId/publish", async (req, res, next) => {
+    const roomId = req.params.roomId;
+
+    const playerId = req.cookies[`player-id:${roomId}`] || req.body.playerId;
+    const token = req.cookies[`player-token:${playerId}`] || req.body.token;
+
+    roomService
+        .publishStory({ roomId, playerId, token })
+        .then((room) => {
+            broadcast(roomId, {
+                type: 'TURN',
+                payload: room,
+            });
+            res.json(room);
+        })
         .catch(next);
 });
 

@@ -17,6 +17,7 @@ import { MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarModule } from "@angular/mater
 import { MatTableModule } from "@angular/material/table";
 import { RegistrationPageComponent } from './pages/registration-page/registration-page.component';
 import { PlayingPageComponent } from './pages/playing-page/playing-page.component';
+import { StoryPageComponent } from './pages/story-page/story-page.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { PlayingPageComponent } from './pages/playing-page/playing-page.componen
     GamePageComponent,
     PlayersComponent,
     RegistrationPageComponent,
-    PlayingPageComponent
+    PlayingPageComponent,
+    StoryPageComponent
   ],
   imports: [
     BrowserModule,

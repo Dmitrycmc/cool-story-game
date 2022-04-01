@@ -1,0 +1,15 @@
+<div class="line">
+  <div>{{story}}</div>
+</div>
+<div class="line">
+  <button
+    (click)="pubStory()"
+    [disabled]="pending || myIndex !== room!.currentPlayerNumber"
+    mat-flat-button
+    color="primary"
+    class="button"
+  >
+    Next
+  </button>
+</div>
+

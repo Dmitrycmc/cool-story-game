@@ -1,3 +1,4 @@
 <app-registration-page *ngIf="room?.status === 'REGISTRATION'"></app-registration-page>
-<app-playing-page *ngIf="room?.status === 'GAME'"></app-playing-page>
-<app-players *ngIf="room?.players" [players]="room?.players!" ></app-players>
+<app-playing-page *ngIf="room?.status === 'GAME'" [room]="room" [questions]="questions"></app-playing-page>
+<app-story-page *ngIf="room?.status === 'FINISHED'" [room]="room"></app-story-page>
+<app-players *ngIf="room" [room]="room"></app-players>

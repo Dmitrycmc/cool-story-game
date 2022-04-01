@@ -200,9 +200,9 @@ export const giveAnswer = async ({
             $set: {
                 status: Status.FINISHED,
                 currentPlayerNumber: 0,
+                turn: nextTurn,
             },
             $unset: {
-                turn: 1,
                 currentQuestionNumber: 1,
             },
         });
@@ -249,7 +249,7 @@ export const getStory = async ({
     if (player?.token !== token) {
         throw new Forbidden("Access denied: invalid playerId / token");
     }
-    if (playerId !== room.players[room.currentPlayerNumber!].id) {
+    if (room.players.findIndex((p) => p.id === playerId) > room.currentPlayerNumber!) {
         throw new Forbidden("Access denied: Not your turn");
     }
 
@@ -259,6 +259,40 @@ export const getStory = async ({
         const i = room.currentPlayerNumber! + 1 + idx;
         return players[i % room.players.length]?.answerSet[idx];
     });
+
+    return result;
+};
+
+export const publishStory = async ({
+    roomId,
+    playerId,
+    token,
+}: {
+    roomId: string;
+    playerId?: string;
+    token?: string;
+}): Promise<Room> => {
+    const room = await roomDao.findOneById(roomId);
+
+    if (room === null) {
+        throw new BadRequest("Invalid room: not found");
+    }
+    if (room.status !== Status.FINISHED) {
+        throw new BadRequest("Invalid room: bad status");
+    }
+    if (!playerId || !token) {
+        throw new Forbidden("Access denied: required playerId and token");
+    }
+    if (!room.players.some((p) => p.id === playerId)) {
+        throw new Forbidden("Access denied: invalid playerId / token");
+    }
+    const player = await playerDao.findOneById(playerId);
+    if (player?.token !== token) {
+        throw new Forbidden("Access denied: invalid playerId / token");
+    }
+    if (playerId !== room.players[room.currentPlayerNumber!].id) {
+        throw new Forbidden("Access denied: Not your turn");
+    }
 
     if (room.currentPlayerNumber === room.players.length - 1) {
         await roomDao.updateById(roomId, {
@@ -278,5 +312,5 @@ export const getStory = async ({
         });
     }
 
-    return result;
+    return (await roomDao.findOneById(roomId)) as Room;
 };
