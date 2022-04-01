@@ -1,0 +1,27 @@
+.table-header-cell {
+  text-align: center;
+
+  &:first-child {
+    text-align: start;
+  }
+
+  &:last-child {
+    padding: 0 !important;
+  }
+}
+
+.table-cell {
+  width: 48px;
+
+  &.completed {
+    color: green;
+  }
+
+  &:first-child {
+    width: 100px;
+  }
+
+  &:last-child {
+    padding: 0 !important;
+  }
+}

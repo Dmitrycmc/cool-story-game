@@ -12,4 +12,4 @@
     Send
   </button>
 </div>
-<app-players [players]="room?.players" ></app-players>
+<app-players *ngIf="room" [players]="room.players" ></app-players>
