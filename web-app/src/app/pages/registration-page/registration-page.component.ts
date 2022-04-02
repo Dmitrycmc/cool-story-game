@@ -26,6 +26,7 @@ export class RegistrationPageComponent implements OnInit {
   }
 
   onSubmit() {
+    this.name = this.name.trim();
     if (!this.name?.length) {
       return;
     }

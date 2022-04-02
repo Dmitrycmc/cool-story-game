@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { RoomService } from "../../services/room.service";
 import { Router } from "@angular/router";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { buildInviteText } from "../../../helpers/templates";
 
 @Component({
   selector: 'app-new-game-page',
@@ -13,7 +14,7 @@ export class NewGamePageComponent implements OnInit {
 
   ngOnInit(): void {
     this.roomService.createRoom().subscribe(async (room) => {
-      await navigator.clipboard.writeText(`${window.location.origin}/room/${room.id}`).then();
+      await navigator.clipboard.writeText(buildInviteText(room.id!)).then();
       this._snackBar.open("Ссылка на комнату скопирована в буфер обмена")
       await this.router.navigate(['/room', room.id], {replaceUrl: true});
     });

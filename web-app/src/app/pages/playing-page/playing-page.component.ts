@@ -47,6 +47,7 @@ export class PlayingPageComponent implements OnInit {
   }
 
   onSubmit() {
+    this.answer = this.answer.trim();
     if (!this.answer?.length) {
       return;
     }
