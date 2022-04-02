@@ -3,6 +3,7 @@ A multiplayer implementation of a simple game where each player answers question
 https://cool-story-game.herokuapp.com/
 
 <img width="787" alt="Screen Shot 2022-04-01 at 05 55 10" src="https://user-images.githubusercontent.com/38041284/161186322-ff10e631-5119-4210-982e-d31569f4f6a2.png">
+<img width="832" alt="Screen Shot 2022-04-02 at 05 17 25" src="https://user-images.githubusercontent.com/38041284/161362011-d189a213-9d2f-47da-b6a4-a0e10ae2b5a8.png">
 
 ## Mofules
 
