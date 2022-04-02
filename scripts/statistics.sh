@@ -12,6 +12,7 @@ readme="$path"/README.md;
 if [ -f "$readme" ]
 then
     line=$(awk '/AlDanial/{ print NR; exit }' "$readme")
+    echo $line;
     if [ "$line" ]
     then
         line=$(expr "$line" - 2)

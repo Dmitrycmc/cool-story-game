@@ -7,23 +7,14 @@ import { generate } from "rand-token";
 import { Room } from "../types/room";
 import { Player } from "../types/player";
 import { Forbidden } from "../types/errors/forbidden";
-import { questionsSetDao } from "../dao/questions-set";
+import { QUESTIONS_MOCK } from "../utils/mocks";
+import { buildStory } from "../utils/template";
 
 export const createRoom = async (): Promise<Room> => {
     const token = generate(6);
 
-    const questionsSet = {
-        id: '12',
-        questions: [
-            'Кто',
-            'С кем',
-            'Где',
-            'Что делали',
-            'Кто увидел',
-            'Что сказал',
-            'Что ответили',
-        ],
-    };
+    // const questionsSet = await questionsSetDao.findOneById("61fe06825360573ef8d33a76");
+    const questionsSet = QUESTIONS_MOCK;
 
     if (questionsSet === null) {
         throw new Error("Server error: questions set not fount");
@@ -274,7 +265,7 @@ export const getStory = async ({
         return players[i % room.players.length]?.answerSet[idx];
     });
 
-    return result;
+    return [buildStory(QUESTIONS_MOCK, result)];
 };
 
 export const publishStory = async ({
