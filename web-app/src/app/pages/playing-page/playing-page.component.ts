@@ -1,9 +1,11 @@
-import { Component, Input, OnInit, SimpleChanges } from "@angular/core";
+import { Component, ElementRef, Input, OnInit, SimpleChanges, ViewChild } from "@angular/core";
 import { RoomService } from "../../services/room.service";
 import { ActivatedRoute } from "@angular/router";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Room } from "../../../../../server-app/types/room";
 import { parseCookies } from "../../../../../server-app/utils/cookies";
+import { Question } from "../../../../../server-app/types/questions-set";
+import { setCaretPosition } from "../../../helpers/input";
 
 @Component({
   selector: 'app-playing-page',
@@ -12,8 +14,10 @@ import { parseCookies } from "../../../../../server-app/utils/cookies";
 })
 export class PlayingPageComponent implements OnInit {
   @Input() room?: Room;
-  @Input() questions?: string[];
+  @Input() questions?: Question[];
+  @ViewChild('answerRef') answerRef?: ElementRef<HTMLInputElement>;
   answer: string = '';
+  caretPos: number = 0;
   pending = false;
   isMyTurn = false;
   roomId = this.activatedRoute.snapshot.params['roomId'];
@@ -32,6 +36,13 @@ export class PlayingPageComponent implements OnInit {
       this.isMyTurn =
         this.room!.players[this.room!.currentPlayerNumber!].id ===
         parseCookies(document.cookie)[`player-id:${this.roomId}`];
+
+      if (this.isMyTurn) {
+        this.answer = this.questions?.[this.room!.currentQuestionNumber!]?.placeholder || '';
+        this.caretPos = this.answer.indexOf('^');
+        console.log(this.caretPos);
+        this.answer = this.answer.replace('^', '');
+      }
     }
   }
 
@@ -50,5 +61,9 @@ export class PlayingPageComponent implements OnInit {
         this._snackBar.open(error.error);
       }
     });
+  }
+
+  onFocus() {
+    setCaretPosition(this.answerRef!.nativeElement, this.caretPos);
   }
 }

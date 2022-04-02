@@ -34,9 +34,7 @@ export class RegistrationPageComponent implements OnInit {
       next: () => {
         this.pending = false;
         this.registered = true;
-        if (!localStorage.getItem('name')) {
-          localStorage.setItem('name', this.name!);
-        }
+        localStorage.setItem('name', this.name!);
       },
       error: (error) => {
         this.pending = false;

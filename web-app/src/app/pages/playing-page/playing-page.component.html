@@ -1,13 +1,16 @@
 <div class="line">
   <mat-form-field class="field-answer" appearance="fill">
-    <mat-label>{{questions?.[room!.currentQuestionNumber!] || ''}}?</mat-label>
-    <input [(ngModel)]="answer" matInput [disabled]="pending || !isMyTurn" (keydown.enter)="onSubmit()">
+    <mat-label>{{questions?.[room!.currentQuestionNumber!]?.text || ''}}?</mat-label>
+    <input matInput #answerRef
+      [(ngModel)]="answer"
+      [disabled]="pending || !isMyTurn"
+      (keydown.enter)="onSubmit()"
+      (click)="onFocus()"
+    >
   </mat-form-field>
-  <button
+  <button mat-flat-button color="primary"
     [disabled]="answer.length == 0 || pending || !isMyTurn"
     (click)="onSubmit()"
-    mat-flat-button
-    color="primary"
   >
     Send
   </button>

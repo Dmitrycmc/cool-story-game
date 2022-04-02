@@ -5,6 +5,7 @@ import { Room } from "../../../../../server-app/types/room";
 import { from } from "rxjs";
 import { PlayersService } from "../../services/players.service";
 import { Status } from "../../../../../server-app/types/status";
+import { Question } from "../../../../../server-app/types/questions-set";
 
 @Component({
   selector: 'app-game-page',
@@ -13,7 +14,7 @@ import { Status } from "../../../../../server-app/types/status";
 })
 export class GamePageComponent implements OnInit {
   room?: Room;
-  questions?: string[];
+  questions?: Question[];
   roomId = this.activatedRoute.snapshot.params['roomId'];
   pending = false;
 
