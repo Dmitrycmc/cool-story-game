@@ -1,4 +1,9 @@
 <app-registration-page *ngIf="room?.status === 'REGISTRATION'"></app-registration-page>
+
+<mat-spinner *ngIf="!room || room?.status === 'GAME' && !questions"></mat-spinner>
+
 <app-playing-page *ngIf="room?.status === 'GAME' && questions" [room]="room" [questions]="questions"></app-playing-page>
+
 <app-story-page *ngIf="room?.status === 'FINISHED'" [room]="room"></app-story-page>
+
 <app-players *ngIf="room" [room]="room"></app-players>

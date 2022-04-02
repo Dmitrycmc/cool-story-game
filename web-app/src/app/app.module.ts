@@ -18,6 +18,7 @@ import { MatTableModule } from "@angular/material/table";
 import { RegistrationPageComponent } from './pages/registration-page/registration-page.component';
 import { PlayingPageComponent } from './pages/playing-page/playing-page.component';
 import { StoryPageComponent } from './pages/story-page/story-page.component';
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 
 @NgModule({
   declarations: [
@@ -40,7 +41,8 @@ import { StoryPageComponent } from './pages/story-page/story-page.component';
     MatButtonModule,
     BrowserAnimationsModule,
     MatSnackBarModule,
-    MatTableModule
+    MatTableModule,
+    MatProgressSpinnerModule
   ],
   providers: [
     {provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 5000}}

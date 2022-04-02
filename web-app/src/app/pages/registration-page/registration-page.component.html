@@ -1,5 +1,5 @@
 <div class="line">
-  <mat-form-field class="field-name" appearance="fill">
+  <mat-form-field appearance="fill">
     <mat-label>Enter your name</mat-label>
     <input [(ngModel)]="name" matInput [disabled]="pending || registered" (keydown.enter)="onSubmit()">
   </mat-form-field>
@@ -12,9 +12,9 @@
     Send
   </button>
 </div>
-<div class="line">
+<div *ngIf="isRoomAdmin" class="line">
   <button
-    [disabled]="!registered || !isRoomAdmin"
+    [disabled]="!registered || pending"
     class="start-button"
     (click)="onStart()"
     mat-flat-button
