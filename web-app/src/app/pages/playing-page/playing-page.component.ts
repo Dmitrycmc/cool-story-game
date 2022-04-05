@@ -7,6 +7,7 @@ import { parseCookies } from "../../../../../server-app/utils/cookies";
 import { Question } from "../../../../../server-app/types/questions-set";
 import { setCaretPosition } from "../../../helpers/input";
 import { addEventListenerOnce, isVisible } from "../../../helpers/visibility";
+import { isNotificationsSupported } from "../../../helpers/device";
 
 @Component({
   selector: 'app-playing-page',
@@ -43,7 +44,7 @@ export class PlayingPageComponent implements OnInit {
         this.caretPos = this.answer.indexOf('^');
         this.answer = this.answer.replace('^', '');
 
-        if (!isVisible()) {
+        if (isNotificationsSupported() && !isVisible()) {
           const a = new Notification('Твой ход!');
 
           addEventListenerOnce(() => a.close());

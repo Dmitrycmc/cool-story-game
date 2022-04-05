@@ -3,6 +3,7 @@ import { parseCookies } from "../../../../../server-app/utils/cookies";
 import { RoomService } from "../../services/room.service";
 import { ActivatedRoute } from "@angular/router";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { isNotificationsSupported } from "../../../helpers/device";
 
 @Component({
   selector: 'app-registration-page',
@@ -15,7 +16,7 @@ export class RegistrationPageComponent implements OnInit {
   roomId = this.activatedRoute.snapshot.params['roomId'];
   registered = Boolean(parseCookies(document.cookie)?.[`player-id:${this.roomId}`]);
   isRoomAdmin = Boolean(parseCookies(document.cookie)?.[`room-token:${this.roomId}`]);
-  notificationsPermission = Notification.permission;
+  notificationsPermission = isNotificationsSupported() ? Notification.permission : null;
 
   constructor(
     private roomService: RoomService,
@@ -31,7 +32,9 @@ export class RegistrationPageComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.checkNotificationsPermission();
+    if (isNotificationsSupported()) {
+      this.checkNotificationsPermission();
+    }
   }
 
   onSubmit() {
