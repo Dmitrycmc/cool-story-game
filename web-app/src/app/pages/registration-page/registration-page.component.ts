@@ -15,6 +15,7 @@ export class RegistrationPageComponent implements OnInit {
   roomId = this.activatedRoute.snapshot.params['roomId'];
   registered = Boolean(parseCookies(document.cookie)?.[`player-id:${this.roomId}`]);
   isRoomAdmin = Boolean(parseCookies(document.cookie)?.[`room-token:${this.roomId}`]);
+  notificationsPermission = Notification.permission;
 
   constructor(
     private roomService: RoomService,
@@ -22,7 +23,15 @@ export class RegistrationPageComponent implements OnInit {
     private _snackBar: MatSnackBar
   ) { }
 
+  async checkNotificationsPermission() {
+    if (this.notificationsPermission !== "granted") {
+      await Notification.requestPermission();
+      this.notificationsPermission = Notification.permission;
+    }
+  }
+
   ngOnInit(): void {
+    this.checkNotificationsPermission();
   }
 
   onSubmit() {

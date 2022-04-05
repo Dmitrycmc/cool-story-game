@@ -6,6 +6,7 @@ import { Room } from "../../../../../server-app/types/room";
 import { parseCookies } from "../../../../../server-app/utils/cookies";
 import { Question } from "../../../../../server-app/types/questions-set";
 import { setCaretPosition } from "../../../helpers/input";
+import { addEventListenerOnce, isVisible } from "../../../helpers/visibility";
 
 @Component({
   selector: 'app-playing-page',
@@ -40,8 +41,14 @@ export class PlayingPageComponent implements OnInit {
       if (this.isMyTurn) {
         this.answer = this.questions?.[this.room!.currentQuestionNumber!]?.placeholder || '';
         this.caretPos = this.answer.indexOf('^');
-        console.log(this.caretPos);
         this.answer = this.answer.replace('^', '');
+
+        if (!isVisible()) {
+          const a = new Notification('Твой ход!');
+
+          addEventListenerOnce(() => a.close());
+          a.onclick = () => window.focus();
+        }
       }
     }
   }
