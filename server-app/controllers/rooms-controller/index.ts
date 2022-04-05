@@ -1,8 +1,7 @@
 import express from "express";
 import * as roomService from "../../services/room-service";
-import { HOUR } from "../../utils/time";
+import { DAY } from "../../utils/time";
 import { broadcast } from "../../websocket";
-import { Status } from "../../types/status";
 
 const router = express.Router();
 
@@ -10,7 +9,7 @@ router.post("/new", async (req, res, next) => {
     roomService
         .createRoom()
         .then(({ token, ...room }) => {
-            res.cookie(`room-token:${room.id}`, token, { maxAge: HOUR }).json(room);
+            res.cookie(`room-token:${room.id}`, token, { maxAge: DAY }).json(room);
         })
         .catch(next);
 });
@@ -23,8 +22,8 @@ router.post("/:roomId/register", async (req, res, next) => {
         .register({ roomId, name })
         .then(({ token, ...player }) => {
             broadcast(roomId, { type: 'NEW_PLAYER', payload: player });
-            res.cookie(`player-id:${roomId}`, player.id, { maxAge: HOUR })
-                .cookie(`player-token:${player.id}`, token, { maxAge: HOUR })
+            res.cookie(`player-id:${roomId}`, player.id, { maxAge: DAY })
+                .cookie(`player-token:${player.id}`, token, { maxAge: DAY })
                 .json(player);
         })
         .catch(next);
